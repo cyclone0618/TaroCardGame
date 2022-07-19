@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets/CardPlay/Script/CardGameLauncher.cs" />
+     <Compile Include="Assets/CardPlay/Script/Poke.cs" />
      <Compile Include="Assets/XLua/Gen/DelegatesGensBridge.cs" />
      <Compile Include="Assets/XLua/Gen/EnumWrap.cs" />
      <Compile Include="Assets/XLua/Gen/PackUnpack.cs" />
@@ -69,7 +70,10 @@
      <None Include="Assets/XLua/Resources/xlua/util.lua.txt" />
      <None Include="Assets/CardPlay/Resources/Lua/CardPlay_Main.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/profiler.lua.txt" />
+     <None Include="Assets/CardPlay/Resources/Lua/Template.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/memory.lua.txt" />
+     <None Include="Assets/CardPlay/Resources/Lua/CardPlay_Config.lua.txt" />
+     <None Include="Assets/Common/Resources/Shader/Sprites-HasZWrite.shader" />
      <None Include="Assets/XLua/CHANGELOG.txt" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2019.4.38f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -640,6 +644,9 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+        <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

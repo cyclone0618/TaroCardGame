@@ -1,1 +1,9 @@
-﻿print("Hello Taro")
+﻿local config = require('Lua/CardPlay_Config')
+
+local card1 = config.NewCard("figure2", "diamond")
+local card2 = config.NewCard("figureA", "spade")
+
+print("Result:"..card1:FigureNum()..card1:PatternNum())
+print("Result:"..card2:FigureNum()..card2:PatternNum())
+print("Compare:"..card1:Compare(card2))
+
