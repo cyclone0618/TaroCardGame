@@ -1,0 +1,19 @@
+﻿require('CardPlay.Server.Player')
+local coroutineRunner = require('CardPlay.Common.CoroutineRunner')
+
+AIPlayer = setmetatable({}, { __index = Player })
+
+function AIPlayer:delayConnect()
+    coroutine.yield(CS.UnityEngine.WaitForSeconds(2))
+    self:setConnected(true, true)
+    coroutine.yield(CS.UnityEngine.WaitForSeconds(3))
+    self:setReady(true, true)
+end
+
+function AIPlayer:createPlayer(server)
+    local player = setmetatable(Player:createPlayer(server), { __index = self })
+    -- AI会执行一个延迟连接Server的操作
+    coroutineRunner.start(AIPlayer.delayConnect, player)
+
+    return player
+end

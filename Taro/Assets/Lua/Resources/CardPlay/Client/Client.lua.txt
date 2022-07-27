@@ -1,0 +1,72 @@
+﻿local config = require('CardPlay.Common.Config')
+local server = require('CardPlay.Server.Server')
+require('CardPlay.Common.State')
+util = require('xlua.util')
+
+local Client = {}
+local bridge = {}
+
+local canvas = assert(CS.UnityEngine.GameObject.Find("Canvas"))
+local readyButton = assert(canvas.transform:Find("ReadyButton").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Button)))
+local readyButtonText = assert(readyButton.transform:Find("Text").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+local upstreamReadyText = assert(canvas.transform:Find("UpstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+local downstreamReadyText = assert(canvas.transform:Find("DownstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+
+function Client:UpdateUI_ReadyStep(data)
+    self.state = data.state
+    self.readyStep = data.readyStep
+    local meInfo = data.meInfo
+    local upstreamInfo = data.upstreamInfo
+    local downstreamInfo = data.downstreamInfo
+
+    if meInfo.connected then
+        readyButton.gameObject:SetActive(true)
+        if meInfo.ready then
+            readyButtonText.text = "已准备"
+            readyButton.onClick:RemoveAllListeners()
+            readyButton.onClick:AddListener(function ()
+                bridge:C2S_SetReady_ReadyStep(false)
+            end)
+        else
+            readyButtonText.text = "准备"
+            readyButton.onClick:RemoveAllListeners()
+            readyButton.onClick:AddListener(function ()
+                bridge:C2S_SetReady_ReadyStep(true)
+            end)
+        end
+    else
+        readyButton.gameObject:SetActive(false)
+    end
+
+    upstreamReadyText.gameObject:SetActive(true)
+    if upstreamInfo.connected then
+        if upstreamInfo.ready then
+            upstreamReadyText.text = "已准备"
+        else
+            upstreamReadyText.text = "未准备"
+        end
+    else
+        upstreamReadyText.text = "未连接"
+    end
+
+    downstreamReadyText.gameObject:SetActive(true)
+    if downstreamInfo.connected then
+        if downstreamInfo.ready then
+            downstreamReadyText.text = "已准备"
+        else
+            downstreamReadyText.text = "未准备"
+        end
+    else
+        downstreamReadyText.text = "未连接"
+    end
+end
+
+--绑定服务端，如果成功，会返回一个桥接对象
+Client.state = State.ready
+bridge = server:connectClient(Client)
+bridge:C2S_RequestData_ReadyStep()
+
+function OnDispose()
+    readyButton.onClick:RemoveAllListeners()
+    readyButton.onClick = nil
+end

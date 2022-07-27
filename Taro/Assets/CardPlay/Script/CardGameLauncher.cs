@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using XLua;
 
 namespace Taro.CardPlay
@@ -12,11 +13,12 @@ namespace Taro.CardPlay
         void Start()
         {
             luaEnv = new LuaEnv();
-            luaEnv.DoString("require 'Lua/CardPlay_Main'");
+            luaEnv.DoString("require 'CardPlay.Client.Client'");
         }
 
-        private void OnDestroy() 
+        private void OnDestroy()
         {
+            luaEnv.DoString("OnDispose()");
             luaEnv.Dispose();
             luaEnv = null;
         }

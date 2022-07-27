@@ -37,10 +37,13 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets/CardPlay/Script/CardGameLauncher.cs" />
+     <Compile Include="Assets/CardPlay/Script/CoroutineRunner.cs" />
      <Compile Include="Assets/CardPlay/Script/Poke.cs" />
      <Compile Include="Assets/XLua/Gen/DelegatesGensBridge.cs" />
      <Compile Include="Assets/XLua/Gen/EnumWrap.cs" />
      <Compile Include="Assets/XLua/Gen/PackUnpack.cs" />
+     <Compile Include="Assets/XLua/Gen/System_Collections_IEnumeratorBridge.cs" />
+     <Compile Include="Assets/XLua/Gen/UnityEngine_WaitForSecondsWrap.cs" />
      <Compile Include="Assets/XLua/Gen/WrapPusher.cs" />
      <Compile Include="Assets/XLua/Gen/XLuaGenAutoRegister.cs" />
      <Compile Include="Assets/XLua/Src/CodeEmit.cs" />
@@ -66,14 +69,20 @@
      <Compile Include="Assets/XLua/Src/TemplateEngine/TemplateEngine.cs" />
      <Compile Include="Assets/XLua/Src/TypeExtensions.cs" />
      <Compile Include="Assets/XLua/Src/Utils.cs" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/State.lua.txt" />
      <None Include="Assets/XLua/Gen/link.xml" />
      <None Include="Assets/XLua/Resources/xlua/util.lua.txt" />
-     <None Include="Assets/CardPlay/Resources/Lua/CardPlay_Main.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Server/AIPlayer.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/CoroutineRunner.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Client/Client.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/profiler.lua.txt" />
-     <None Include="Assets/CardPlay/Resources/Lua/Template.lua.txt" />
+     <None Include="Assets/Lua/Resources/Template.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Server/Server.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/memory.lua.txt" />
-     <None Include="Assets/CardPlay/Resources/Lua/CardPlay_Config.lua.txt" />
-     <None Include="Assets/Common/Resources/Shader/Sprites-HasZWrite.shader" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/Config.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Server/RealPlayer.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Server/PlayerClientBridge.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Server/Player.lua.txt" />
      <None Include="Assets/XLua/CHANGELOG.txt" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2019.4.38f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -627,6 +636,9 @@
     <Reference Include="Unity.Rider.Editor">
         <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+        <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Notifications.Android">
         <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/Unity.Notifications.Android.dll</HintPath>
     </Reference>
@@ -644,9 +656,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Sprite.Editor">
-        <HintPath>/Users/cyclone/Project/TaroCardGame/Taro/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

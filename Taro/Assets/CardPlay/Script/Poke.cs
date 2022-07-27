@@ -7,7 +7,13 @@ namespace Taro.CardPlay
 {
     public class Poke : MonoBehaviour
     {
-        private Text text;
+        [SerializeField]
+        private MeshRenderer text;
+
+        private void Start() 
+        {
+            text.sortingOrder = 20;
+        }
 
         public void SetContent(int figure, int pattern)
         {

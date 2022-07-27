@@ -1,0 +1,69 @@
+﻿--服务端和客户端的沟通桥接
+
+local BridgeData = {}
+
+function BridgeData:NewData(server)
+    local data = setmetatable({}, {__index = BridgeData})
+    data.state = server.state
+    if data.state == State.ready then
+        data.readyStep = server.readyStep
+    elseif data.state == State.chooseTaro then
+        data.chooseTaroStep = server.chooseTaroStep
+    elseif data.state == State.deal then
+        data.dealStep = server.dealStep
+    elseif data.state == State.playCard then
+        data.playCardStep = server.playCardStep
+    end
+    return data
+end
+
+Bridge = {}
+
+function Bridge:New(client, player)
+    local bridge = {}
+    self.client = client
+    self.player = player
+    self.server = player.server
+    setmetatable(bridge, {__index = Bridge})
+    return bridge
+end
+
+local function wrapPlayerInfo_ReadyStep(player)
+    local info = {
+        ready = player.ready,
+        connected = player.connected,
+    }
+    return info
+end
+
+local function createData_ReadyStep(bridge)
+    local server = bridge.server
+    local data = BridgeData:NewData(server)
+    local me = server.players[1]
+    local downstream = server.players[2]
+    local upstream = server.players[3]
+
+    data.meInfo = wrapPlayerInfo_ReadyStep(me)
+    data.downstreamInfo = wrapPlayerInfo_ReadyStep(downstream)
+    data.upstreamInfo = wrapPlayerInfo_ReadyStep(upstream)
+    return data;
+end
+
+function Bridge:C2S_RequestData_ReadyStep()
+    local data = createData_ReadyStep(self)
+    self.client:UpdateUI_ReadyStep(data)
+end
+
+function Bridge:C2S_SetReady_ReadyStep(ready)
+    self.player:setReady(ready, true)
+end
+
+function Bridge:S2C_onPlayerConnected(player, connected)
+    local data = createData_ReadyStep(self)
+    self.client:UpdateUI_ReadyStep(data)
+end
+
+function Bridge:S2C_onPlayerReady(player, ready)
+    local data = createData_ReadyStep(self)
+    self.client:UpdateUI_ReadyStep(data)
+end

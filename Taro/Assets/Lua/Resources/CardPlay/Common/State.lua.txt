@@ -1,0 +1,29 @@
+﻿State = {
+    ready = 1, --准备阶段
+    chooseTaro = 2, --选择塔罗牌阶段
+    deal = 3, --发牌阶段
+    playCard = 4, --打牌阶段
+    settle = 5, --游戏结算阶段
+}
+
+ReadyStep = {
+    notReady = 1, --尚未准备
+    ready = 2, --已准备
+}
+
+ChooseTaroStep = {
+    noSelect = 1, --尚未选择塔罗牌
+    selected = 2, --已经选择塔罗牌
+}
+
+DealStep = {
+    beforeDeal = 1, --发牌前
+    dealing = 2, --发牌中
+    afterDeal = 3, --发牌后
+}
+
+PlayCardStep = {
+    Player1Turn = 1, --玩家1回合
+    Player2Turn = 2, --玩家2回合
+    Player3Turn = 3, --玩家3回合
+}

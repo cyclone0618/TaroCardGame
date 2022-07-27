@@ -1,0 +1,58 @@
+﻿local config = require('CardPlay.Common.Config')
+require('CardPlay.Common.State')
+require('CardPlay.Server.AIPlayer')
+require('CardPlay.Server.RealPlayer')
+
+--首先，生成一个服务端对象
+Server = {
+    state = State.ready,
+    readyStep = ReadyStep.disconnect,
+    chooseTaroStep = ChooseTaroStep.noSelect,
+    dealStep = DealStep.beforeDeal,
+    playCardStep = PlayCardStep.Player1Turn,
+}
+
+--客户端链接服务端
+function Server:connectClient(client)
+    local realPlayer = self.players[1]
+    if realPlayer.client ~= nil then
+        error("there're already a connected player existed.")
+    else
+        return realPlayer:bindClient(client)
+    end
+end
+
+--玩家连接状态改变时
+function Server:onPlayerConnected(player, connected)
+    if self.players ~= nil then
+        for i, p in ipairs(self.players) do
+            p:onPlayerConnected(player, connected)
+        end
+    end
+end
+
+--玩家准备状态改变时
+function Server:onPlayerReady(player, ready)
+    if self.players ~= nil then
+        local isAllReady = true
+        for i, p in ipairs(self.players) do
+            p:onPlayerReady(player, ready)
+            if not p.ready then
+                isAllReady = false
+            end
+        end
+
+        if isAllReady then
+            print("all ready now!")
+        end
+    end
+end
+
+--创建三个玩家(1个真实玩家和2个AI玩家)
+Server.players = {
+    RealPlayer:createPlayer(Server),
+    AIPlayer:createPlayer(Server),
+    AIPlayer:createPlayer(Server),
+}
+
+return Server

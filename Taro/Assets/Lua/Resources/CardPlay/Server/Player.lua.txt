@@ -1,0 +1,34 @@
+﻿Player = {}
+
+--初始化
+function Player:init()
+    self:setConnected(false, false)
+    self:setReady(false, false)
+end
+
+function Player:setConnected(connected, notify)
+    self.connected = connected
+    if notify then
+        self.server:onPlayerConnected(self, connected)
+    end
+end
+
+function Player:setReady(ready, notify)
+    self.ready = ready
+    if notify then
+        self.server:onPlayerReady(self, ready)
+    end
+end
+
+function Player:onPlayerConnected(player, connected)
+end
+
+function Player:onPlayerReady(player, ready)
+end
+
+function Player:createPlayer(server)
+    local player = setmetatable({}, {__index = self} )
+    player.server = server
+    player:init()
+    return player
+end

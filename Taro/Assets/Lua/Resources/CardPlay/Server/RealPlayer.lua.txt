@@ -1,0 +1,30 @@
+﻿require('CardPlay.Server.Player')
+require('CardPlay.Server.PlayerClientBridge')
+
+RealPlayer = setmetatable({}, { __index = Player })
+
+function RealPlayer:createPlayer(server)
+    local player = setmetatable(Player:createPlayer(server), {__index = self} )
+    return player
+end
+
+function RealPlayer:onPlayerConnected(player, connected)
+    if self.bridge ~= nil then
+        self.bridge:S2C_onPlayerConnected(player, connected)
+    end
+end
+
+function RealPlayer:onPlayerReady(player, ready)
+    if self.bridge ~= nil then
+        self.bridge:S2C_onPlayerReady(player, ready)
+    end
+end
+
+--绑定Client，并返回一个Bridge对象用于桥接
+function RealPlayer:bindClient(client)
+    self.client = client
+    self.bridge = Bridge:New(client, self)
+    self:setConnected(true)
+    return self.bridge
+end
+

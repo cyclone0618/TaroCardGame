@@ -2,4 +2,9 @@
 
 <linker>
 
+	<assembly fullname="UnityEngine.CoreModule">
+	    <type fullname="UnityEngine.WaitForSeconds" preserve="all"/>
+		
+	</assembly>
+
 </linker>
