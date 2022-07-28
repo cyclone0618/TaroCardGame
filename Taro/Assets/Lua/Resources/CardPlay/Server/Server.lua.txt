@@ -1,7 +1,8 @@
 ﻿local config = require('CardPlay.Common.Config')
-require('CardPlay.Common.State')
+require('CardPlay.Common.Poke')
 require('CardPlay.Server.AIPlayer')
 require('CardPlay.Server.RealPlayer')
+require('CardPlay.Common.Deck')
 
 --首先，生成一个服务端对象
 Server = {
@@ -42,10 +43,26 @@ function Server:onPlayerReady(player, ready)
             end
         end
 
+        
         if isAllReady then
-            print("all ready now!")
+            self:enterChooseTaroState()
         end
     end
+end
+
+--进入选择塔罗牌的阶段
+function Server:enterChooseTaroState()
+    self.state = State.chooseTaro
+
+    --暂时跳过选塔罗阶段
+    self:enterDealState()
+end
+
+function Server:enterDealState()
+    self.state = State.deal
+
+    --创建一副扑克牌，然后每个玩家随机发18张牌
+
 end
 
 --创建三个玩家(1个真实玩家和2个AI玩家)

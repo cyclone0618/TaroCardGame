@@ -79,8 +79,9 @@
      <None Include="Assets/Lua/Resources/Template.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/Server.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/memory.lua.txt" />
-     <None Include="Assets/Lua/Resources/CardPlay/Common/Config.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/Poke.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/RealPlayer.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/Deck.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/PlayerClientBridge.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/Player.lua.txt" />
      <None Include="Assets/XLua/CHANGELOG.txt" />

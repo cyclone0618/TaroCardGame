@@ -1,0 +1,52 @@
+﻿Poke = {}
+
+-- 牌点
+Poke.Figure = {
+    figure2 = 1,
+    figure3 = 2,
+    figure4 = 3,
+    figure5 = 4,
+    figure6 = 5,
+    figure7 = 6,
+    figure8 = 7,
+    figure9 = 8,
+    figure10 = 9,
+    figureJ = 10,
+    figureQ = 11,
+    figureK = 12,
+    figureA = 13,
+    figureJoker = 14,
+}
+
+-- 花色
+Poke.Pattern = { diamond = 1, club = 2, heart = 3, spade = 4 }
+
+Poke.Card = {
+    -- 大小对比
+    Compare = function(self, b)
+        -- 先进行点数判断
+        if self.figure > b.figure then
+            return 1
+        elseif self.figure < b.figure then
+            return -1
+        else
+            -- 点数相同时，进行花色判断
+            if self.pattern > b.pattern then
+                return 1
+            elseif self.pattern < b.pattern then
+                return -1
+            else
+                return 0
+            end
+        end
+
+    end
+}
+
+-- 创建新卡片
+function Poke.NewCard(_figure, _pattern)
+    local o = setmetatable({ figure = _figure, pattern = _pattern }, { __index = Poke.Card })
+    return o
+end
+
+return Poke

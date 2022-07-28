@@ -1,7 +1,6 @@
-﻿local config = require('CardPlay.Common.Config')
+﻿require('CardPlay.Common.Poke')
 local server = require('CardPlay.Server.Server')
 require('CardPlay.Common.State')
-util = require('xlua.util')
 
 local Client = {}
 local bridge = {}
@@ -65,6 +64,7 @@ end
 Client.state = State.ready
 bridge = server:connectClient(Client)
 bridge:C2S_RequestData_ReadyStep()
+
 
 function OnDispose()
     readyButton.onClick:RemoveAllListeners()

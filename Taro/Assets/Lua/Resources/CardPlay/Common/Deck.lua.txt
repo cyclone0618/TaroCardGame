@@ -1,0 +1,19 @@
+﻿require 'CardPlay.Common.Poke'
+
+local Deck = {}
+
+function Deck:Create()
+    local deck = setmetatable({}, { __index = Deck })
+    local index = 1
+    for figureName, figureNum in pairs(Poke.Figure) do
+        if figureNum == Poke.Figure.figureJoker then
+            
+        else
+            for patternName, patternNum in pairs(Poke.Pattern) do
+                deck[index] = Poke.NewCard(figureNum, patternNum)
+                index = index + 1
+            end
+        end
+    end
+    return deck
+end
