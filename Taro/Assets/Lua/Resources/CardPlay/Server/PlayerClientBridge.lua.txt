@@ -29,7 +29,7 @@ function Bridge:New(client, player)
     return bridge
 end
 
-local function wrapPlayerInfo_ReadyStep(player)
+local function wrapPlayerInfo_ReadyState(player)
     local info = {
         ready = player.ready,
         connected = player.connected,
@@ -37,20 +37,20 @@ local function wrapPlayerInfo_ReadyStep(player)
     return info
 end
 
-local function createData_ReadyStep(bridge)
+local function createData_ReadyState(bridge)
     local server = bridge.server
     local data = BridgeData:NewData(server)
     local me = server.players[1]
     local downstream = server.players[2]
     local upstream = server.players[3]
 
-    data.meInfo = wrapPlayerInfo_ReadyStep(me)
-    data.downstreamInfo = wrapPlayerInfo_ReadyStep(downstream)
-    data.upstreamInfo = wrapPlayerInfo_ReadyStep(upstream)
+    data.meInfo = wrapPlayerInfo_ReadyState(me)
+    data.downstreamInfo = wrapPlayerInfo_ReadyState(downstream)
+    data.upstreamInfo = wrapPlayerInfo_ReadyState(upstream)
     return data;
 end
 
-local function wrapPlayerInfo_DealStep(player, isSelf)
+local function wrapPlayerInfo_DealState(player, isSelf)
     local info = { }
     info.isSelf = isSelf
     if isSelf then
@@ -64,55 +64,95 @@ local function wrapPlayerInfo_DealStep(player, isSelf)
     return info
 end
 
-local function createData_DealStep(bridge)
+local function createData_DealState(bridge)
     local server = bridge.server
     local data = BridgeData:NewData(server)
     local me = server.players[1]
     local downstream = server.players[2]
     local upstream = server.players[3]
 
-    data.meInfo = wrapPlayerInfo_DealStep(me, true)
-    data.downstreamInfo = wrapPlayerInfo_DealStep(downstream, false)
-    data.upstreamInfo = wrapPlayerInfo_DealStep(upstream, false)
+    data.meInfo = wrapPlayerInfo_DealState(me, true)
+    data.downstreamInfo = wrapPlayerInfo_DealState(downstream, false)
+    data.upstreamInfo = wrapPlayerInfo_DealState(upstream, false)
+    return data;
+end
+
+local function wrapPlayerInfo_PlayCardState(player, isSelf, isTurnPlayer)
+    local info = { }
+    info.isSelf = isSelf
+    if isSelf then
+        info.hands = {}
+        for index, poke in ipairs(player.hands) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(info.hands, poke2)
+        end
+    end
+    info.board = {}
+    if player.board ~= nil then
+        for index, poke in ipairs(player.board) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(info.board, poke2)
+        end
+    end
+    info.handNum = #player.hands
+    info.isTurnPlayer = isTurnPlayer
+    return info
+end
+
+local function createData_PlayCardState(bridge)
+    local server = bridge.server
+    local data = BridgeData:NewData(server)
+    local me = server.players[1]
+    local downstream = server.players[2]
+    local upstream = server.players[3]
+    local currentTurn = bridge.server.currentTurn
+    data.meInfo = wrapPlayerInfo_PlayCardState(me, true, currentTurn == 1)
+    data.downstreamInfo = wrapPlayerInfo_PlayCardState(downstream, false, currentTurn == 2)
+    data.upstreamInfo = wrapPlayerInfo_PlayCardState(upstream, false, currentTurn == 3)
     return data;
 end
 
 --client 2 server--
 
-function Bridge:C2S_RequestData_ReadyStep()
-    local data = createData_ReadyStep(self)
-    self.client:UpdateUI_ReadyStep(data)
+function Bridge:C2S_RequestData_ReadyState()
+    local data = createData_ReadyState(self)
+    self.client:UpdateUI_ReadyState(data)
 end
 
-function Bridge:C2S_SetReady_ReadyStep(ready)
+function Bridge:C2S_SetReady_ReadyState(ready)
     self.player:setReady(ready, true)
 end
 
-function Bridge:C2S_Done_DealStep()
-    self.player:Done_DealStep()
+function Bridge:C2S_Done_DealState()
+    self.player:Done_DealState()
 end
 
 --server 2 client--
 
 function Bridge:S2C_onPlayerConnected(player, connected)
-    local data = createData_ReadyStep(self)
-    self.client:UpdateUI_ReadyStep(data)
+    local data = createData_ReadyState(self)
+    self.client:UpdateUI_ReadyState(data)
 end
 
 function Bridge:S2C_onPlayerReady(player, ready)
-    local data = createData_ReadyStep(self)
-    self.client:UpdateUI_ReadyStep(data)
+    local data = createData_ReadyState(self)
+    self.client:UpdateUI_ReadyState(data)
 end
 
-function Bridge:S2C_endReadyStep()
-    self.client:endReadyStep()
+function Bridge:S2C_endReadyState()
+    self.client:endReadyState()
 end
 
-function Bridge:S2C_startDealStep()
-    self.client:startDealStep()
+function Bridge:S2C_startDealState()
+    self.client:startDealState()
 end
 
-function Bridge:S2C_afterDeal_DealStep()
-    local data = createData_DealStep(self)
-    self.client:afterDeal_DealStep(data)
+function Bridge:S2C_afterDeal_DealState()
+    local data = createData_DealState(self)
+    self.client:afterDeal_DealState(data)
+end
+
+function Bridge:S2C_startPlayCardState_PlayCardState()
+    local data = createData_PlayCardState(self)
+    self.client:startPlayCardState_PlayCardState(data)
 end

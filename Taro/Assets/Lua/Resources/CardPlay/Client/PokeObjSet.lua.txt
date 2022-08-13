@@ -1,4 +1,5 @@
 ﻿PokeObjSet = {}
+local pokePrefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
 
 function PokeObjSet:New(parent)
     local set = setmetatable({}, { __index = self } )
@@ -8,10 +9,19 @@ function PokeObjSet:New(parent)
 end
 
 function PokeObjSet:SetData(handsData)
-    local prefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
+    --先删除所有子元素
+    local oldChildNum = self.parent.transform:GetChildCount()
+    if oldChildNum > 0 then
+        for i = oldChildNum, 1, -1 do
+            local child = self.parent.transform:GetChild(i - 1).gameObject
+            CS.UnityEngine.Object.Destroy(child)
+       end
+    end
+
+    --然后重新创建
     local handNum = #handsData
     for index, pokeData in ipairs(handsData) do
-        local pokeObj = CS.UnityEngine.Object.Instantiate(prefab, self.parent.transform)
+        local pokeObj = CS.UnityEngine.Object.Instantiate(pokePrefab, self.parent.transform)
         pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - handNum * 0.5) * 2, 0, 0)
         local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
         pokeMono:SetContent(pokeData.figure, pokeData.pattern)

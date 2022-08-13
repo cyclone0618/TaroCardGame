@@ -91,6 +91,7 @@
      <None Include="Assets/Lua/Resources/CardPlay/Server/Player.lua.txt" />
      <None Include="Assets/XLua/CHANGELOG.txt" />
      <None Include="Assets/Lua/Resources/Template.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Client/Button.lua.txt" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2019.4.38f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

@@ -6,7 +6,7 @@ local readyButtonText = assert(readyButton.transform:Find("Text").gameObject:Get
 local upstreamReadyText = assert(canvas.transform:Find("UpstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
 local downstreamReadyText = assert(canvas.transform:Find("DownstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
 
-function ReadyPanel:UpdateUI_ReadyStep(client, data)
+function ReadyPanel:UpdateUI_ReadyState(client, data)
     client.state = data.state
     client.readyStep = data.readyStep
     local meInfo = data.meInfo
@@ -19,13 +19,13 @@ function ReadyPanel:UpdateUI_ReadyStep(client, data)
             readyButtonText.text = "已准备"
             readyButton.onClick:RemoveAllListeners()
             readyButton.onClick:AddListener(function ()
-                client.bridge:C2S_SetReady_ReadyStep(false)
+                client.bridge:C2S_SetReady_ReadyState(false)
             end)
         else
             readyButtonText.text = "准备"
             readyButton.onClick:RemoveAllListeners()
             readyButton.onClick:AddListener(function ()
-                client.bridge:C2S_SetReady_ReadyStep(true)
+                client.bridge:C2S_SetReady_ReadyState(true)
             end)
         end
     else
@@ -55,7 +55,7 @@ function ReadyPanel:UpdateUI_ReadyStep(client, data)
     end
 end
 
-function ReadyPanel:EndReadyStep()
+function ReadyPanel:EndReadyState()
     readyButton.gameObject:SetActive(false)
     upstreamReadyText.gameObject:SetActive(false)
     downstreamReadyText.gameObject:SetActive(false)

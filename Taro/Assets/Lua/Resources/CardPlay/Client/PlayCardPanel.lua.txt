@@ -1,9 +1,12 @@
 ﻿require('CardPlay.Client.PokeObjSet')
+require('CardPlay.Client.Button')
 
 PlayCardPanel = {}
 
 local canvas = assert(CS.UnityEngine.GameObject.Find("Canvas"))
 local myHandSet = PokeObjSet:New(assert(CS.UnityEngine.GameObject.Find("MyHand")))
+local playCardBtn = Button:New(assert(canvas.transform:Find("PlayCardButton").gameObject))
+local giveUpBtn = Button:New(assert(canvas.transform:Find("GiveUpButton").gameObject))
 
 PlayInfoArea = {}
 
@@ -12,17 +15,20 @@ function PlayInfoArea:Create(areaName)
     ui.area = assert(canvas.transform:Find(areaName).gameObject)
     ui.playerNameTxt = assert(ui.area.transform:Find("PlayerNameTxt").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
     ui.handsNumTxt = assert(ui.area.transform:Find("HandsNumTxt").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+    ui.turnMark = assert(ui.area.transform:Find("TurnMark").gameObject)
     return ui
 end
 
 function PlayInfoArea:Show(playerName, handsNum)
     self.area:SetActive(true)
     self.playerNameTxt.text = playerName
+    self.turnMark:SetActive(false)
     self:UpdateHandsNum(handsNum)
 end
 
 function PlayInfoArea:SetData(info)
     self:UpdateHandsNum(info.handNum)
+    self.turnMark:SetActive(info.isTurnPlayer == true)
 end
 
 function PlayInfoArea:UpdateHandsNum(handsNum)
@@ -46,5 +52,19 @@ function PlayCardPanel:SetData_AfterDeal(data)
 
     local myHands = data.meInfo.hands
     myHandSet:SetData(myHands)
+end
+
+function PlayCardPanel:SetData_StartPlayCard(data)
+    upPlayInfoArea:SetData(data.upstreamInfo)
+    downPlayInfoArea:SetData(data.downstreamInfo)
+    myPlayInfoArea:SetData(data.meInfo)
+
+    local myHands = data.meInfo.hands
+    myHandSet:SetData(myHands)
+
+    playCardBtn:Show()
+    giveUpBtn:Show()
+    playCardBtn:SetEnable(false)
+    giveUpBtn:SetEnable(false)
 end
 

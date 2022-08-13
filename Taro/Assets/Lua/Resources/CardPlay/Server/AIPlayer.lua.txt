@@ -22,6 +22,6 @@ end
 function AIPlayer:afterDeal(deck)
     self.base.afterDeal(self, deck)
     self:done(function ()
-        self.server:checkIfCompleteDealStep()
+        self.server:checkIfCompleteDealState()
     end)
 end

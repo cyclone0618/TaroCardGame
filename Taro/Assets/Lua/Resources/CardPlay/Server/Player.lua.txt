@@ -46,11 +46,11 @@ function Player:onPlayerReady(player, ready)
 end
 
 --结束准备阶段
-function Player:endReadyStep()
+function Player:endReadyState()
 end
 
 --开始发牌阶段
-function Player:startDealStep()
+function Player:startDealState()
 end
 
 --发牌阶段，发牌前
@@ -85,6 +85,9 @@ end
 
 --发牌阶段，发牌后
 function Player:afterDeal(deck)
+end
+
+function Player:startPlayCardState()
 end
 
 function Player:createPlayer(server)

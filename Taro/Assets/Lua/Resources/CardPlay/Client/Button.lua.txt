@@ -1,0 +1,17 @@
+﻿Button = {}
+
+function Button:New(btnObj)
+    local btn = setmetatable({}, {__index = self})
+    btn.obj = btnObj
+    btn.button = btnObj:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    btn.buttonText = btnObj.transform:Find("Text").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    return btn
+end
+
+function Button:Show()
+    self.obj:SetActive(true)
+end
+
+function Button:SetEnable(enable)
+    self.button.interactable = enable
+end

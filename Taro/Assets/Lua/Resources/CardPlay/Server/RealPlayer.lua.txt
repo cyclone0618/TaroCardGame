@@ -29,23 +29,27 @@ function RealPlayer:bindClient(client)
     return self.bridge
 end
 
-function RealPlayer:endReadyStep()
-    self.base.endReadyStep(self)
-    self.bridge:S2C_endReadyStep()
+function RealPlayer:endReadyState()
+    self.base.endReadyState(self)
+    self.bridge:S2C_endReadyState()
 end
 
-function RealPlayer:startDealStep()
-    self.base.startDealStep(self)
-    self.bridge:S2C_startDealStep()
+function RealPlayer:startDealState()
+    self.base.startDealState(self)
+    self.bridge:S2C_startDealState()
 end
 
 function RealPlayer:afterDeal(deck)
     self.base.afterDeal(self, deck)
-    self.bridge:S2C_afterDeal_DealStep()
+    self.bridge:S2C_afterDeal_DealState()
 end
 
-function RealPlayer:Done_DealStep()
+function RealPlayer:Done_DealState()
     self:done(function ()
-        self.server:checkIfCompleteDealStep()
+        self.server:checkIfCompleteDealState()
     end)
+end
+
+function RealPlayer:startPlayCardState()
+    self.bridge:S2C_startPlayCardState_PlayCardState()
 end

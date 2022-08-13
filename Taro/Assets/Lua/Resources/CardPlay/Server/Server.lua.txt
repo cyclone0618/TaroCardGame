@@ -45,7 +45,7 @@ function Server:onPlayerReady(player, ready)
 
         if isAllReady then
             for index, p in ipairs(self.players) do
-                p:endReadyStep()
+                p:endReadyState()
             end
             self:enterChooseTaroState()
         end
@@ -68,7 +68,7 @@ function Server:enterDealState()
 
     --开始发牌阶段
     for index, player in ipairs(self.players) do
-        player:startDealStep()
+        player:startDealState()
     end
 
     --创建一副扑克牌，然后每个玩家随机发18张牌
@@ -107,7 +107,13 @@ function Server:checkIfDone(doneFunc)
     end
 end
 
-function Server:checkIfCompleteDealStep()
+function Server:forEachPlayer(func)
+    for index, player in ipairs(self.players) do
+        func(index, player)
+    end
+end
+
+function Server:checkIfCompleteDealState()
     self:checkIfDone(function ()
        self:enterPlayCardState()
     end)
@@ -116,6 +122,13 @@ end
 function Server:enterPlayCardState()
     self.state = State.playCard
     print('进入打牌阶段')
+
+    --先决定谁的回合
+    self.currentTurn = math.random(1, #self.players)
+
+    self:forEachPlayer(function (index, player)
+        player:startPlayCardState()
+    end)
 end
 
 --创建三个玩家(1个真实玩家和2个AI玩家)

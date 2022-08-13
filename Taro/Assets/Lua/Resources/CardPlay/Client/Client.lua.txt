@@ -7,29 +7,33 @@ require('CardPlay.Client.PlayCardPanel')
 local Client = {}
 local bridge = {}
 
-function Client:UpdateUI_ReadyStep(data)
-    ReadyPanel:UpdateUI_ReadyStep(self, data)
+function Client:UpdateUI_ReadyState(data)
+    ReadyPanel:UpdateUI_ReadyState(self, data)
 end
 
-function Client:endReadyStep()
-    ReadyPanel:EndReadyStep()
+function Client:endReadyState()
+    ReadyPanel:EndReadyState()
 end
 
-function Client:startDealStep()
+function Client:startDealState()
     Client.state = State.deal
 end
 
-function Client:afterDeal_DealStep(data)
+function Client:afterDeal_DealState(data)
     PlayCardPanel:Show()
     PlayCardPanel:SetData_AfterDeal(data)
-    bridge:C2S_Done_DealStep()
+    bridge:C2S_Done_DealState()
+end
+
+function Client:startPlayCardState_PlayCardState(data)
+    PlayCardPanel:SetData_StartPlayCard(data)
 end
 
 --绑定服务端，如果成功，会返回一个桥接对象
 Client.state = State.ready
 bridge = server:connectClient(Client)
 Client.bridge = bridge
-bridge:C2S_RequestData_ReadyStep()
+bridge:C2S_RequestData_ReadyState()
 
 function OnDispose()
     ReadyPanel:OnDipose()
