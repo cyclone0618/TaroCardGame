@@ -4,6 +4,13 @@
 
 	<assembly fullname="UnityEngine.CoreModule">
 	    <type fullname="UnityEngine.WaitForSeconds" preserve="all"/>
+		<type fullname="UnityEngine.Object" preserve="all"/>
+		<type fullname="UnityEngine.Vector3" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="Assembly-CSharp">
+	    <type fullname="Taro.CardPlay.Poke" preserve="all"/>
 		
 	</assembly>
 

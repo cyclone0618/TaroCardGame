@@ -19,7 +19,9 @@ public static class CoroutineConfig
         {
             return new List<Type>()
             {
-                typeof(WaitForSeconds)
+                typeof(WaitForSeconds),
+                typeof(UnityEngine.Object),
+                typeof(UnityEngine.Vector3),
             };
         }
     }

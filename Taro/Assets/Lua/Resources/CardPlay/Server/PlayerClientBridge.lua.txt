@@ -1,4 +1,5 @@
 ﻿--服务端和客户端的沟通桥接
+require 'CardPlay.Common.Poke'
 
 local BridgeData = {}
 
@@ -49,6 +50,35 @@ local function createData_ReadyStep(bridge)
     return data;
 end
 
+local function wrapPlayerInfo_DealStep(player, isSelf)
+    local info = { }
+    info.isSelf = isSelf
+    if isSelf then
+        info.hands = {}
+        for index, poke in ipairs(player.hands) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(info.hands, poke2)
+        end
+    end
+    info.handNum = #player.hands
+    return info
+end
+
+local function createData_DealStep(bridge)
+    local server = bridge.server
+    local data = BridgeData:NewData(server)
+    local me = server.players[1]
+    local downstream = server.players[2]
+    local upstream = server.players[3]
+
+    data.meInfo = wrapPlayerInfo_DealStep(me, true)
+    data.downstreamInfo = wrapPlayerInfo_DealStep(downstream, false)
+    data.upstreamInfo = wrapPlayerInfo_DealStep(upstream, false)
+    return data;
+end
+
+--client 2 server--
+
 function Bridge:C2S_RequestData_ReadyStep()
     local data = createData_ReadyStep(self)
     self.client:UpdateUI_ReadyStep(data)
@@ -58,6 +88,12 @@ function Bridge:C2S_SetReady_ReadyStep(ready)
     self.player:setReady(ready, true)
 end
 
+function Bridge:C2S_Done_DealStep()
+    self.player:Done_DealStep()
+end
+
+--server 2 client--
+
 function Bridge:S2C_onPlayerConnected(player, connected)
     local data = createData_ReadyStep(self)
     self.client:UpdateUI_ReadyStep(data)
@@ -66,4 +102,17 @@ end
 function Bridge:S2C_onPlayerReady(player, ready)
     local data = createData_ReadyStep(self)
     self.client:UpdateUI_ReadyStep(data)
+end
+
+function Bridge:S2C_endReadyStep()
+    self.client:endReadyStep()
+end
+
+function Bridge:S2C_startDealStep()
+    self.client:startDealStep()
+end
+
+function Bridge:S2C_afterDeal_DealStep()
+    local data = createData_DealStep(self)
+    self.client:afterDeal_DealStep(data)
 end

@@ -58,4 +58,8 @@
     "files.associations": {
         "*.lua.txt":"lua"
     },
+    "Lua.diagnostics.disable": [
+        "unused-local"
+    ],
+    "omnisharp.useModernNet": false
 }

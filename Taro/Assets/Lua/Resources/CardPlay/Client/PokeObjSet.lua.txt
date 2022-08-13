@@ -1,0 +1,20 @@
+﻿PokeObjSet = {}
+
+function PokeObjSet:New(parent)
+    local set = setmetatable({}, { __index = self } )
+    set.parent = parent
+    set.hands = {}
+    return set
+end
+
+function PokeObjSet:SetData(handsData)
+    local prefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
+    local handNum = #handsData
+    for index, pokeData in ipairs(handsData) do
+        local pokeObj = CS.UnityEngine.Object.Instantiate(prefab, self.parent.transform)
+        pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - handNum * 0.5) * 2, 0, 0)
+        local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
+        pokeMono:SetContent(pokeData.figure, pokeData.pattern)
+        table.insert(self.hands, pokeObj)
+    end
+end

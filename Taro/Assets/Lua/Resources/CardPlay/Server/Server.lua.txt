@@ -1,8 +1,8 @@
-﻿local config = require('CardPlay.Common.Config')
+﻿local state = require('CardPlay.Common.State')
 require('CardPlay.Common.Poke')
 require('CardPlay.Server.AIPlayer')
 require('CardPlay.Server.RealPlayer')
-require('CardPlay.Common.Deck')
+local Deck = require('CardPlay.Common.Deck')
 
 --首先，生成一个服务端对象
 Server = {
@@ -43,8 +43,10 @@ function Server:onPlayerReady(player, ready)
             end
         end
 
-        
         if isAllReady then
+            for index, p in ipairs(self.players) do
+                p:endReadyStep()
+            end
             self:enterChooseTaroState()
         end
     end
@@ -58,11 +60,62 @@ function Server:enterChooseTaroState()
     self:enterDealState()
 end
 
+local deck = {}
+
 function Server:enterDealState()
     self.state = State.deal
+    self.dealStep = DealStep.beforeDeal
+
+    --开始发牌阶段
+    for index, player in ipairs(self.players) do
+        player:startDealStep()
+    end
 
     --创建一副扑克牌，然后每个玩家随机发18张牌
+    deck = Deck:create()
 
+    --发牌前
+    for index, player in ipairs(self.players) do
+        player:beforeDeal(deck)
+    end
+
+    --发牌中
+    for index, player in ipairs(self.players) do
+        player:onDeal(deck)
+    end
+
+    --发牌后
+    for index, player in ipairs(self.players) do
+        player:afterDeal(deck)
+    end
+end
+
+function Server:checkIfDone(doneFunc)
+    local isAllDone = true
+    for index, player in ipairs(self.players) do
+        if player.done ~= true then
+            isAllDone = false
+        end
+    end
+
+    if isAllDone then
+        for index, player in ipairs(self.players) do
+            player:reset_done()
+        end
+
+        doneFunc()
+    end
+end
+
+function Server:checkIfCompleteDealStep()
+    self:checkIfDone(function ()
+       self:enterPlayCardState()
+    end)
+end
+
+function Server:enterPlayCardState()
+    self.state = State.playCard
+    print('进入打牌阶段')
 end
 
 --创建三个玩家(1个真实玩家和2个AI玩家)
@@ -71,5 +124,10 @@ Server.players = {
     AIPlayer:createPlayer(Server),
     AIPlayer:createPlayer(Server),
 }
+
+math.randomseed(os.time())
+for i = 1, 50, 1 do --先清理掉前面几个随机值
+    math.random()
+end
 
 return Server

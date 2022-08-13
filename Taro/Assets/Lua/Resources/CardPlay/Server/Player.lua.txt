@@ -6,6 +6,14 @@ function Player:init()
     self:setReady(false, false)
 end
 
+function Player:getIndex()
+    for index, player in ipairs(self.server.players) do
+        if player == self then
+            return index
+        end
+    end
+end
+
 function Player:setConnected(connected, notify)
     self.connected = connected
     if notify then
@@ -20,10 +28,63 @@ function Player:setReady(ready, notify)
     end
 end
 
+function Player:done(checkFunc)
+    self.done = true
+    checkFunc()
+end
+
+function Player:reset_done()
+    self.done = false
+end
+
+--准备阶段，有玩家连接时
 function Player:onPlayerConnected(player, connected)
 end
 
+--准备阶段，有玩家准备时
 function Player:onPlayerReady(player, ready)
+end
+
+--结束准备阶段
+function Player:endReadyStep()
+end
+
+--开始发牌阶段
+function Player:startDealStep()
+end
+
+--发牌阶段，发牌前
+function Player:beforeDeal(deck)
+    --创建手牌
+    self.hands = {}
+    self.handNum = 18
+end
+
+--发牌阶段，发牌中
+function Player:onDeal(deck)
+    --填充牌数直到手牌填满或者牌库为空
+    while #self.hands < self.handNum and #deck > 0 do
+        local index = math.random(1, #deck)
+        local poke = deck[index]
+        table.insert(self.hands, poke)
+        table.remove(deck, index)
+    end
+
+    --手牌排序
+    table.sort(self.hands, function (a, b)
+        return a:compare(b) < 0
+    end)
+
+    --打印手牌
+    local handsStr = {}
+    for index, value in ipairs(self.hands) do
+        handsStr[index] = value:name()
+    end
+    print('玩家'..self:getIndex()..'手牌:('..table.concat(handsStr, ',')..')')
+end
+
+--发牌阶段，发牌后
+function Player:afterDeal(deck)
 end
 
 function Player:createPlayer(server)

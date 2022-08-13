@@ -2,18 +2,19 @@
 
 local Deck = {}
 
-function Deck:Create()
+function Deck:create()
     local deck = setmetatable({}, { __index = Deck })
-    local index = 1
     for figureName, figureNum in pairs(Poke.Figure) do
         if figureNum == Poke.Figure.figureJoker then
-            
+            table.insert(deck, Poke.newCard(figureNum, Poke.Pattern.diamond)) --小鬼
+            table.insert(deck, Poke.newCard(figureNum, Poke.Pattern.spade)) --大鬼
         else
             for patternName, patternNum in pairs(Poke.Pattern) do
-                deck[index] = Poke.NewCard(figureNum, patternNum)
-                index = index + 1
+                table.insert(deck, Poke.newCard(figureNum, patternNum))
             end
         end
     end
     return deck
 end
+
+return Deck

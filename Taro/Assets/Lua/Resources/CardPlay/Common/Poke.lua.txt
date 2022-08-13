@@ -18,12 +18,20 @@ Poke.Figure = {
     figureJoker = 14,
 }
 
+local figureStr = {
+    '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', 'Joker'
+}
+
+local patternStr = {
+    '♦', '♣', '♥', '♠'
+}
+
 -- 花色
 Poke.Pattern = { diamond = 1, club = 2, heart = 3, spade = 4 }
 
 Poke.Card = {
     -- 大小对比
-    Compare = function(self, b)
+    compare = function(self, b)
         -- 先进行点数判断
         if self.figure > b.figure then
             return 1
@@ -39,12 +47,28 @@ Poke.Card = {
                 return 0
             end
         end
+    end,
+    name = function (self)
+        return '['..figureStr[self.figure]..', '..patternStr[self.pattern]..']'
+    end,
+    tostring = function (self)
+        return self:name()
+    end,
+}
 
-    end
+Poke.Kind = {
+    Single = 1, --散牌
+    Pair = 2, --对子
+    Triple = 3, --三条
+    FullHouse = 5, --葫芦
+    Straight = 6, --顺子
+    Flush = 7, --同花
+    Bomb = 8, --炸弹
+    StraightFlush = 9, --同花顺
 }
 
 -- 创建新卡片
-function Poke.NewCard(_figure, _pattern)
+function Poke.newCard(_figure, _pattern)
     local o = setmetatable({ figure = _figure, pattern = _pattern }, { __index = Poke.Card })
     return o
 end

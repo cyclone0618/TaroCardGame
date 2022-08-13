@@ -5,6 +5,7 @@ RealPlayer = setmetatable({}, { __index = Player })
 
 function RealPlayer:createPlayer(server)
     local player = setmetatable(Player:createPlayer(server), {__index = self} )
+    player.base = Player
     return player
 end
 
@@ -28,3 +29,23 @@ function RealPlayer:bindClient(client)
     return self.bridge
 end
 
+function RealPlayer:endReadyStep()
+    self.base.endReadyStep(self)
+    self.bridge:S2C_endReadyStep()
+end
+
+function RealPlayer:startDealStep()
+    self.base.startDealStep(self)
+    self.bridge:S2C_startDealStep()
+end
+
+function RealPlayer:afterDeal(deck)
+    self.base.afterDeal(self, deck)
+    self.bridge:S2C_afterDeal_DealStep()
+end
+
+function RealPlayer:Done_DealStep()
+    self:done(function ()
+        self.server:checkIfCompleteDealStep()
+    end)
+end

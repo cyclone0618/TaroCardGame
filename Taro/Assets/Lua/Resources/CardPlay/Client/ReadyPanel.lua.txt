@@ -1,0 +1,71 @@
+﻿ReadyPanel = {}
+
+local canvas = assert(CS.UnityEngine.GameObject.Find("Canvas"))
+local readyButton = assert(canvas.transform:Find("ReadyButton").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Button)))
+local readyButtonText = assert(readyButton.transform:Find("Text").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+local upstreamReadyText = assert(canvas.transform:Find("UpstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+local downstreamReadyText = assert(canvas.transform:Find("DownstreamReadyInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text)))
+
+function ReadyPanel:UpdateUI_ReadyStep(client, data)
+    client.state = data.state
+    client.readyStep = data.readyStep
+    local meInfo = data.meInfo
+    local upstreamInfo = data.upstreamInfo
+    local downstreamInfo = data.downstreamInfo
+
+    if meInfo.connected then
+        readyButton.gameObject:SetActive(true)
+        if meInfo.ready then
+            readyButtonText.text = "已准备"
+            readyButton.onClick:RemoveAllListeners()
+            readyButton.onClick:AddListener(function ()
+                client.bridge:C2S_SetReady_ReadyStep(false)
+            end)
+        else
+            readyButtonText.text = "准备"
+            readyButton.onClick:RemoveAllListeners()
+            readyButton.onClick:AddListener(function ()
+                client.bridge:C2S_SetReady_ReadyStep(true)
+            end)
+        end
+    else
+        readyButton.gameObject:SetActive(false)
+    end
+
+    upstreamReadyText.gameObject:SetActive(true)
+    if upstreamInfo.connected then
+        if upstreamInfo.ready then
+            upstreamReadyText.text = "已准备"
+        else
+            upstreamReadyText.text = "未准备"
+        end
+    else
+        upstreamReadyText.text = "未连接"
+    end
+
+    downstreamReadyText.gameObject:SetActive(true)
+    if downstreamInfo.connected then
+        if downstreamInfo.ready then
+            downstreamReadyText.text = "已准备"
+        else
+            downstreamReadyText.text = "未准备"
+        end
+    else
+        downstreamReadyText.text = "未连接"
+    end
+end
+
+function ReadyPanel:EndReadyStep()
+    readyButton.gameObject:SetActive(false)
+    upstreamReadyText.gameObject:SetActive(false)
+    downstreamReadyText.gameObject:SetActive(false)
+    readyButton.onClick:RemoveAllListeners()
+    self:OnDipose()
+end
+
+function ReadyPanel:OnDipose()
+    if readyButton.onClick ~= nil then
+        readyButton.onClick:RemoveAllListeners()
+        readyButton.onClick = nil
+    end
+end
