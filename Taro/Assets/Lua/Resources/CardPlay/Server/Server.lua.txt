@@ -7,7 +7,6 @@ local Deck = require('CardPlay.Common.Deck')
 --首先，生成一个服务端对象
 Server = {
     state = State.ready,
-    readyStep = ReadyStep.disconnect,
     chooseTaroStep = ChooseTaroStep.noSelect,
     dealStep = DealStep.beforeDeal,
     playCardStep = PlayCardStep.Player1Turn,
@@ -93,7 +92,7 @@ end
 function Server:checkIfDone(doneFunc)
     local isAllDone = true
     for index, player in ipairs(self.players) do
-        if player.done ~= true then
+        if player.isDone ~= true then
             isAllDone = false
         end
     end
@@ -114,8 +113,8 @@ function Server:forEachPlayer(func)
 end
 
 function Server:checkIfCompleteDealState()
-    self:checkIfDone(function ()
-       self:enterPlayCardState()
+    self:checkIfDone(function()
+        self:enterPlayCardState()
     end)
 end
 
@@ -126,9 +125,159 @@ function Server:enterPlayCardState()
     --先决定谁的回合
     self.currentTurn = math.random(1, #self.players)
 
-    self:forEachPlayer(function (index, player)
+    self:forEachPlayer(function(index, player)
         player:startPlayCardState()
     end)
+
+    --循环处理打牌回合，直到游戏结束
+    self:onPlayCardState()
+end
+
+--玩家决策
+function Server:waitForPlayResult(player, callback)
+    player:makePlayCardDecision(function(result, cards)
+        if result == 0 then
+            --弃权情况下，无需进行校验
+            callback(player, result, cards)
+            return
+        end
+
+        local r, kind, figure = Poke.judgeCardsKind(cards)
+        local current = { kind = kind, figure = figure }
+        if r then
+            --牌型校验通过
+            if self.lastPlayCards ~= nil and #self.lastPlayCards > 0 then
+                local r2, kind2, figure2 = Poke.judgeCardsKind(self.lastPlayCards)
+                if r2 then
+                    local last = { kind = kind2, figure = figure2 }
+                    local judge = Poke.JudgeIfBiggerThan(current, last)
+                    if judge then
+                        --对比校验通过
+                        callback(player, result, cards)
+                    else
+                        --对比校验不通过
+                        warn("server牌型对比校验不通过,请检查原因")
+                    end
+                else
+                    --无需对比校验
+                    callback(player, result, cards)
+                end
+            else
+                --无需对比校验
+                callback(player, result, cards)
+            end
+        end
+
+    end)
+end
+
+--有出牌行为后，通知每个玩家
+function Server:notifyEachPlayerAfterPlayCardAction()
+    self:forEachPlayer(function(index, player)
+        player:notifyPlayCardAction()
+    end)
+end
+
+--打牌阶段主流程
+function Server:onPlayCardState()
+    self.currentRound = 0
+    self.turnOfRound = 0
+    self:playCardTurnAction()
+end
+
+--检查是否有玩家胜利
+function Server:checkIfGameOver()
+    local gameover = false
+    for index, player in ipairs(self.players) do
+        if #player.hands == 0 then
+            self.winner = player
+            gameover = true
+            break
+        end
+    end
+
+    return gameover
+end
+
+function Server:playCardTurnAction()
+    local over = self:checkIfGameOver()
+    if over then
+        --游戏结束
+        self.state = State.settle
+        self:forEachPlayer(function (index, player)
+            player:startSettleState()
+        end)
+        return
+    end
+
+    self.turnOfRound = self.turnOfRound + 1
+    self:waitForPlayResult(self.players[self.currentTurn], function(player, result, cards)
+        local roundCompleted = true
+        if result == 0 then
+            --弃权
+            player.giveUp = true
+            player.board = nil
+            for index, player in ipairs(self.players) do
+                if player ~= self.lastPlayPlayer and player.giveUp ~= true then
+                    roundCompleted = false
+                end
+            end
+        elseif result == 1 then
+            --出牌
+            self.lastPlayCards = cards
+            self.lastPlayPlayer = player
+
+            if self.turnOfRound == 1 then
+                --清空前一轮的场面情况
+                for index, player in ipairs(self.players) do
+                    player.giveUp = false
+                    player.board = {}
+                end
+            end
+
+            player:moveHandsToBoard(cards)
+            for index, player in ipairs(self.players) do
+                player.giveUp = false
+            end
+            roundCompleted = false
+        end
+
+        if roundCompleted ~= true then
+            --该轮轮到下一个玩家出牌
+            self.currentTurn = self.currentTurn % #self.players + 1
+            self:notifyEachPlayerAfterPlayCardAction()
+            self:playCardTurnAction()
+        else
+            --进入下一轮
+            self.currentRound = self.currentRound + 1
+            self.turnOfRound = 0
+            self.currentTurn = self.lastPlayPlayer.playerIndex
+            self.lastPlayPlayer = nil
+            self.lastPlayCards = nil
+            self:notifyEachPlayerAfterPlayCardAction()
+            self:playCardTurnAction()
+        end
+    end)
+end
+
+--检查是否要结束结算阶段
+function Server:checkIfCompleteSettleState()
+    self:checkIfDone(function()
+        self:restartReadyState()
+    end)
+end
+
+--重新进入准备阶段
+function Server:restartReadyState()
+    for index, player in ipairs(self.players) do
+        player:setConnected(true, false)
+        player:setReady(false, false)
+    end
+    self.state = State.ready
+
+    for index, player in ipairs(self.players) do
+        player:restartReadyState()
+    end
 end
 
 --创建三个玩家(1个真实玩家和2个AI玩家)
@@ -137,6 +286,10 @@ Server.players = {
     AIPlayer:createPlayer(Server),
     AIPlayer:createPlayer(Server),
 }
+
+Server.players[1].playerIndex = 1
+Server.players[2].playerIndex = 2
+Server.players[3].playerIndex = 3
 
 math.randomseed(os.time())
 for i = 1, 50, 1 do --先清理掉前面几个随机值

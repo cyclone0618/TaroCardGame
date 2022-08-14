@@ -54,8 +54,12 @@ Poke.Card = {
     tostring = function (self)
         return self:name()
     end,
+    same = function (self, b)
+        return self.figure == b.figure and self.pattern == b.pattern
+    end
 }
 
+--牌型
 Poke.Kind = {
     Single = 1, --散牌
     Pair = 2, --对子
@@ -67,7 +71,171 @@ Poke.Kind = {
     StraightFlush = 9, --同花顺
 }
 
--- 创建新卡片
+--排序
+function Poke.SortCard(cards)
+    table.sort(cards, function (a, b)
+        return a:compare(b) < 0
+    end)
+end
+
+--判断牌型
+function Poke.judgeCardsKind(cards)
+    Poke.SortCard(cards)
+
+    local cardNum = #cards
+    if cardNum == 1 then
+        --散牌
+        return true, Poke.Kind.Single, cards[1].figure
+    elseif cardNum == 2 then
+        if cards[1].figure == cards[2].figure then
+            if cards[1].figure == Poke.Figure.figureJoker then
+                --炸弹（Joker）
+                return true, Poke.Kind.Bomb, cards[1].figure
+            else
+                --对子
+                return true, Poke.Kind.Pair, cards[1].figure
+            end
+            
+        end
+    elseif cardNum == 3 then
+        if cards[1].figure == cards[2].figure and cards[1].figure == cards[3].figure then
+            --三条
+            return true, Poke.Kind.Triple, cards[1].figure
+        end
+    elseif cardNum == 4 then
+        if cards[1].figure == cards[2].figure and cards[1].figure == cards[3].figure and cards[1].figure == cards[4].figure then
+            --炸弹
+            return true, Poke.Kind.Bomb, cards[1].figure
+        end
+    elseif cardNum == 5 then
+        if cards[1].figure == cards[2].figure and cards[4].figure == cards[5].figure then
+            --葫芦
+            if cards[1].figure == cards[3] then
+                return true, Poke.Kind.FullHouse, cards[1].figure
+            elseif cards[5].figure == cards[3] then
+                return true, Poke.Kind.FullHouse, cards[5].figure
+            end
+            
+        end
+        
+        local isStraight, isFlush = false, false
+        if cards[1].figure == cards[2].figure - 1 and
+            cards[2].figure == cards[3].figure - 1 and
+            cards[3].figure == cards[4].figure - 1 and
+            cards[4].figure == cards[5].figure - 1 then
+            isStraight = true
+            
+        end
+
+        if cards[1].pattern == cards[2].pattern and
+        cards[2].pattern == cards[3].pattern and
+        cards[3].pattern == cards[4].pattern and
+        cards[4].pattern == cards[5].pattern then
+            isFlush = false
+        end
+
+        if isStraight and isFlush then
+            --同花顺
+            return true, Poke.Kind.StraightFlush, cards[5].figure
+        elseif isStraight then
+            --顺子
+            return true, Poke.Kind.Straight, cards[5].figure
+        elseif isFlush then
+            --同花
+            return true, Poke.Kind.Flush, cards[5].figure
+        end
+    end
+
+    return false
+end
+
+--判断牌型大小
+function Poke.JudgeIfBiggerThan(a, b)
+    if a.kind == b.kind then
+        -- 同牌型下，比点数大小
+        return a.figure > b.figure
+    elseif a.kind == Poke.Kind.Bomb and b.kind ~=Poke.Kind.StraightFlush then
+        -- 不同牌型下，炸弹可以吃掉同花顺以外的牌型
+        return true
+    end
+end
+
+--获取能赢b的牌型
+function Poke.GetAllCardsBiggerThan(hands, b)
+    Poke.SortCard(hands)
+    local possibleCards = {}
+
+    for cardNum = 1, 5, 1 do
+        Poke.GetAllCardsRecursion(hands, possibleCards, b, 1, cardNum, 1, {})
+    end
+
+    for index, cards in ipairs(possibleCards) do
+        Poke.PrintCards(cards, '可以出的牌')
+    end
+    return possibleCards
+end
+
+--获取能赢b的牌型(递归)
+function Poke.GetAllCardsRecursion(hands, possibleCards, b, currentNum, totalNum, startIndex, cards)
+    for i = startIndex, #hands + currentNum - totalNum, 1 do
+        cards[currentNum] = hands[i]
+        if currentNum == totalNum then
+            local r, kind, figure = Poke.judgeCardsKind(cards)
+            if r then
+                if b ~= nil then
+                    --需要进行大小对比校验
+                    local kindAndFigure = { kind = kind, figure = figure }
+                    if Poke.JudgeIfBiggerThan(kindAndFigure, b) then
+                        table.insert(possibleCards, Poke.DeepCopyCards(cards))
+                    end
+                else
+                    --无需大小对比校验
+                    table.insert(possibleCards, Poke.DeepCopyCards(cards))
+                end
+            end
+        else
+            Poke.GetAllCardsRecursion(hands, possibleCards, b, currentNum + 1, totalNum, i + 1, cards)
+        end
+    end
+end
+
+--深度拷贝卡牌数组
+function Poke.DeepCopyCards(cards)
+    local newCards = {}
+    for index, value in ipairs(cards) do
+        newCards[index] = value
+    end
+    return newCards
+end
+
+--移除卡牌
+function Poke.RemoveCards(cards, cardsToRemove)
+    for index, card in ipairs(cardsToRemove) do
+        local removeIndex = 0
+        for index2, card2 in ipairs(cards) do
+            if card:same(card2) then
+                removeIndex = index2
+            end
+        end
+
+        if removeIndex > 0 then
+            table.remove(cards, removeIndex)
+        end
+    end
+end
+
+--打印卡牌数组信息
+function Poke.PrintCards(cards, prefixStr)
+    local handsStr = {}
+    if cards ~= nil then
+        for index, value in ipairs(cards) do
+            handsStr[index] = value:name()
+        end
+    end
+    print(prefixStr..':('..table.concat(handsStr, ',')..')')
+end
+
+-- 创建新卡牌
 function Poke.newCard(_figure, _pattern)
     local o = setmetatable({ figure = _figure, pattern = _pattern }, { __index = Poke.Card })
     return o

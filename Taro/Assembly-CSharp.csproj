@@ -87,6 +87,7 @@
      <None Include="Assets/Lua/Resources/CardPlay/Common/Poke.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/RealPlayer.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Common/Deck.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Client/WinnerDialog.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/PlayerClientBridge.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/Player.lua.txt" />
      <None Include="Assets/XLua/CHANGELOG.txt" />

@@ -12,6 +12,10 @@ function Button:Show()
     self.obj:SetActive(true)
 end
 
+function Button:Hide()
+    self.obj:SetActive(false)
+end
+
 function Button:SetEnable(enable)
     self.button.interactable = enable
 end

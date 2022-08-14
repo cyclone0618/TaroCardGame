@@ -6,11 +6,6 @@
     settle = 5, --游戏结算阶段
 }
 
-ReadyStep = {
-    notReady = 1, --尚未准备
-    ready = 2, --已准备
-}
-
 ChooseTaroStep = {
     noSelect = 1, --尚未选择塔罗牌
     selected = 2, --已经选择塔罗牌

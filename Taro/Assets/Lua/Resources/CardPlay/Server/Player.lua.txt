@@ -29,12 +29,12 @@ function Player:setReady(ready, notify)
 end
 
 function Player:done(checkFunc)
-    self.done = true
+    self.isDone = true
     checkFunc()
 end
 
 function Player:reset_done()
-    self.done = false
+    self.isDone = false
 end
 
 --准备阶段，有玩家连接时
@@ -71,16 +71,10 @@ function Player:onDeal(deck)
     end
 
     --手牌排序
-    table.sort(self.hands, function (a, b)
-        return a:compare(b) < 0
-    end)
+    Poke.SortCard(self.hands)
 
     --打印手牌
-    local handsStr = {}
-    for index, value in ipairs(self.hands) do
-        handsStr[index] = value:name()
-    end
-    print('玩家'..self:getIndex()..'手牌:('..table.concat(handsStr, ',')..')')
+    Poke.PrintCards(self.hands, '玩家'..self:getIndex()..'手牌')
 end
 
 --发牌阶段，发牌后
@@ -90,9 +84,31 @@ end
 function Player:startPlayCardState()
 end
 
+--出牌决策
+function Player:makePlayCardDecision(callback)
+end
+
+--每当有玩家做出决策后
+function Player:notifyPlayCardAction()
+end
+
+--进入结算阶段
+function Player:startSettleState()
+end
+
+--从手牌到场上
+function Player:moveHandsToBoard(cards)
+    Poke.RemoveCards(self.hands, cards)
+    self.board = cards
+end
+
 function Player:createPlayer(server)
     local player = setmetatable({}, {__index = self} )
     player.server = server
     player:init()
     return player
+end
+
+--重新进入准备阶段
+function Player:restartReadyState()
 end

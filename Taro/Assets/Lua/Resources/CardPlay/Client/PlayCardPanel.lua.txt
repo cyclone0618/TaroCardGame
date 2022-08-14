@@ -1,12 +1,20 @@
 ﻿require('CardPlay.Client.PokeObjSet')
 require('CardPlay.Client.Button')
+require('CardPlay.Client.WinnerDialog')
 
 PlayCardPanel = {}
 
 local canvas = assert(CS.UnityEngine.GameObject.Find("Canvas"))
 local myHandSet = PokeObjSet:New(assert(CS.UnityEngine.GameObject.Find("MyHand")))
+local upstreamBoardSet = PokeObjSet:New(assert(CS.UnityEngine.GameObject.Find("Opponent1Board")))
+local downstreamBoardSet = PokeObjSet:New(assert(CS.UnityEngine.GameObject.Find("Opponent2Board")))
+local myBoardSet = PokeObjSet:New(assert(CS.UnityEngine.GameObject.Find("MyBoard")))
 local playCardBtn = Button:New(assert(canvas.transform:Find("PlayCardButton").gameObject))
 local giveUpBtn = Button:New(assert(canvas.transform:Find("GiveUpButton").gameObject))
+local myGiveUp = assert(canvas.transform:Find("MyGiveUp").gameObject)
+local upstreamGiveUp = assert(canvas.transform:Find("UpstreamGiveUp").gameObject)
+local downstreamGiveUp = assert(canvas.transform:Find("DownstreamGiveUp").gameObject)
+local winnerDialog = WinnerDialog:New(assert(canvas.transform:Find("WinnerDialog").gameObject))
 
 PlayInfoArea = {}
 
@@ -24,6 +32,10 @@ function PlayInfoArea:Show(playerName, handsNum)
     self.playerNameTxt.text = playerName
     self.turnMark:SetActive(false)
     self:UpdateHandsNum(handsNum)
+end
+
+function PlayInfoArea:Hide()
+    self.area:SetActive(false)
 end
 
 function PlayInfoArea:SetData(info)
@@ -55,16 +67,70 @@ function PlayCardPanel:SetData_AfterDeal(data)
 end
 
 function PlayCardPanel:SetData_StartPlayCard(data)
+    playCardBtn:Show()
+    giveUpBtn:Show()
+    self:SetData_PlayCardAction(data)
+end
+
+function PlayCardPanel:SetData_PlayCardAction(data)
     upPlayInfoArea:SetData(data.upstreamInfo)
     downPlayInfoArea:SetData(data.downstreamInfo)
     myPlayInfoArea:SetData(data.meInfo)
 
     local myHands = data.meInfo.hands
+    local myBoard = data.meInfo.board
+    local upstreamBoard = data.upstreamInfo.board
+    local downstreamBoard = data.downstreamInfo.board
     myHandSet:SetData(myHands)
+    myBoardSet:SetData(myBoard)
+    upstreamBoardSet:SetData(upstreamBoard)
+    downstreamBoardSet:SetData(downstreamBoard)
+    myGiveUp:SetActive(data.meInfo.giveUp)
+    upstreamGiveUp:SetActive(data.upstreamInfo.giveUp)
+    downstreamGiveUp:SetActive(data.downstreamInfo.giveUp)
 
-    playCardBtn:Show()
-    giveUpBtn:Show()
     playCardBtn:SetEnable(false)
     giveUpBtn:SetEnable(false)
+end
+
+function PlayCardPanel:SetData_SettleState(data, client)
+    playCardBtn:Hide()
+    giveUpBtn:Hide()
+    self:SetData_PlayCardAction(data)
+
+    local winnerInfo = ""
+    if data.meInfo.isWinner then
+        winnerInfo = "胜者是我方玩家"
+    elseif data.upstreamInfo.isWinner then
+        winnerInfo = "胜者是上游玩家"
+    elseif data.downstreamInfo.isWinner then
+        winnerInfo = "胜者是下游玩家"
+    end
+    winnerDialog:Show(winnerInfo, function ()
+        winnerDialog:Hide()
+        client.bridge:C2S_OnWinnerDialogBtnClick()
+    end)
+end
+
+function PlayCardPanel:EnableUIForMakeDesicion()
+    playCardBtn:SetEnable(true)
+    giveUpBtn:SetEnable(true)
+end
+
+function PlayCardPanel:Hide()
+    myHandSet:Clean()
+    myBoardSet:Clean()
+    upstreamBoardSet:Clean()
+    downstreamBoardSet:Clean()
+    myGiveUp:SetActive(false)
+    upstreamGiveUp:SetActive(false)
+    downstreamGiveUp:SetActive(false)
+    upPlayInfoArea:Hide()
+    downPlayInfoArea:Hide()
+    myPlayInfoArea:Hide()
+end
+
+function PlayCardPanel:OnDispose()
+    winnerDialog:OnDispose()
 end
 

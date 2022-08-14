@@ -29,6 +29,23 @@ function Client:startPlayCardState_PlayCardState(data)
     PlayCardPanel:SetData_StartPlayCard(data)
 end
 
+function Client:notifyPlayCardAction_PlayCardState(data)
+    PlayCardPanel:SetData_PlayCardAction(data)
+end
+
+function Client:makePlayCardDecision_PlayCardState()
+    PlayCardPanel:EnableUIForMakeDesicion()
+end
+
+function Client:startSettleState(data)
+    PlayCardPanel:SetData_SettleState(data, self)
+end
+
+function Client:restartReadyState(data)
+    PlayCardPanel:Hide()
+    ReadyPanel:UpdateUI_ReadyState(self, data)
+end
+
 --绑定服务端，如果成功，会返回一个桥接对象
 Client.state = State.ready
 bridge = server:connectClient(Client)
@@ -37,4 +54,5 @@ bridge:C2S_RequestData_ReadyState()
 
 function OnDispose()
     ReadyPanel:OnDipose()
+    PlayCardPanel:OnDispose()
 end

@@ -21,7 +21,47 @@ end
 
 function AIPlayer:afterDeal(deck)
     self.base.afterDeal(self, deck)
-    self:done(function ()
+    self:done(function()
         self.server:checkIfCompleteDealState()
+    end)
+end
+
+function AIPlayer:makePlayCardDecision(callback)
+    coroutineRunner.start(function()
+        --延迟一点时间再出牌
+        coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
+        local lastKindAndFirgure = nil
+        local lastPlayCard = self.server.lastPlayCards
+        if lastPlayCard ~= nil and #lastPlayCard > 0 then
+            local r, kind, figure = Poke.judgeCardsKind(lastPlayCard)
+            if r then
+                lastKindAndFirgure = { kind = kind, figure = figure }
+            end
+        end
+        --找出所有可能的组合
+        local possibleCards = Poke.GetAllCardsBiggerThan(self.hands, lastKindAndFirgure)
+
+        if #possibleCards > 0 then
+            --出牌
+            callback(1, possibleCards[1])
+        else
+            --弃权
+            callback(0, nil)
+        end
+    end)
+end
+
+function AIPlayer:startSettleState()
+    self.base.startSettleState(self)
+    self:done(function ()
+        self.server:checkIfCompleteSettleState()
+    end)
+end
+
+function AIPlayer:restartReadyState()
+    self.base.restartReadyState(self)
+    coroutineRunner.start(function ()
+        coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
+        self:setReady(true, true)
     end)
 end

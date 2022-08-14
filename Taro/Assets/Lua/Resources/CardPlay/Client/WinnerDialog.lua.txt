@@ -1,0 +1,28 @@
+﻿WinnerDialog = {}
+
+function WinnerDialog:New(dialog)
+    local set = setmetatable({}, { __index = self })
+    set.dialog = dialog
+    set.text = dialog.transform:Find("WinnerInfo").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Text))
+    set.button = dialog.transform:Find("ContinueBtn").gameObject:GetComponent(typeof(CS.UnityEngine.UI.Button))
+    return set
+end
+
+function WinnerDialog:Show(info, btnClickCallback)
+    self.dialog:SetActive(true)
+    self.text.text = info
+    self.button.onClick:RemoveAllListeners()
+    self.button.onClick:AddListener(btnClickCallback)
+end
+
+function WinnerDialog:Hide()
+    self.dialog:SetActive(false)
+    self.button.onClick:RemoveAllListeners()
+end
+
+function WinnerDialog:OnDispose()
+    if self.button.onClick ~= nil then
+        self.button.onClick:RemoveAllListeners()
+        self.button.onClick = nil
+    end
+end

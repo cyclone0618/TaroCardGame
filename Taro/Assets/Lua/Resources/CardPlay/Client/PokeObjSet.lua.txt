@@ -2,29 +2,35 @@
 local pokePrefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
 
 function PokeObjSet:New(parent)
-    local set = setmetatable({}, { __index = self } )
+    local set = setmetatable({}, { __index = self })
     set.parent = parent
     set.hands = {}
     return set
 end
 
-function PokeObjSet:SetData(handsData)
+function PokeObjSet:SetData(cardsData)
     --先删除所有子元素
+    self:Clean()
+
+    --然后重新创建
+    if cardsData ~= nil then
+        local handNum = #cardsData
+        for index, pokeData in ipairs(cardsData) do
+            local pokeObj = CS.UnityEngine.Object.Instantiate(pokePrefab, self.parent.transform)
+            pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - 0.5 - handNum * 0.5) * 2, 0, 0)
+            local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
+            pokeMono:SetContent(pokeData.figure, pokeData.pattern)
+            table.insert(self.hands, pokeObj)
+        end
+    end
+end
+
+function PokeObjSet:Clean()
     local oldChildNum = self.parent.transform:GetChildCount()
     if oldChildNum > 0 then
         for i = oldChildNum, 1, -1 do
             local child = self.parent.transform:GetChild(i - 1).gameObject
             CS.UnityEngine.Object.Destroy(child)
-       end
-    end
-
-    --然后重新创建
-    local handNum = #handsData
-    for index, pokeData in ipairs(handsData) do
-        local pokeObj = CS.UnityEngine.Object.Instantiate(pokePrefab, self.parent.transform)
-        pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - handNum * 0.5) * 2, 0, 0)
-        local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
-        pokeMono:SetContent(pokeData.figure, pokeData.pattern)
-        table.insert(self.hands, pokeObj)
+        end
     end
 end

@@ -6,9 +6,7 @@ local BridgeData = {}
 function BridgeData:NewData(server)
     local data = setmetatable({}, {__index = BridgeData})
     data.state = server.state
-    if data.state == State.ready then
-        data.readyStep = server.readyStep
-    elseif data.state == State.chooseTaro then
+    if data.state == State.chooseTaro then
         data.chooseTaroStep = server.chooseTaroStep
     elseif data.state == State.deal then
         data.dealStep = server.dealStep
@@ -96,6 +94,7 @@ local function wrapPlayerInfo_PlayCardState(player, isSelf, isTurnPlayer)
     end
     info.handNum = #player.hands
     info.isTurnPlayer = isTurnPlayer
+    info.giveUp = player.giveUp
     return info
 end
 
@@ -109,6 +108,52 @@ local function createData_PlayCardState(bridge)
     data.meInfo = wrapPlayerInfo_PlayCardState(me, true, currentTurn == 1)
     data.downstreamInfo = wrapPlayerInfo_PlayCardState(downstream, false, currentTurn == 2)
     data.upstreamInfo = wrapPlayerInfo_PlayCardState(upstream, false, currentTurn == 3)
+
+    data.lastPlayCards = {}
+    if server.lastPlayCards ~= nil then
+        for index, poke in ipairs(server.lastPlayCards) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(data.lastPlayCards, poke2)
+        end
+    end
+
+    return data;
+end
+
+local function wrapPlayerInfo_SettleState(player, isSelf, isWinner)
+    local info = { }
+    info.isSelf = isSelf
+    if isSelf then
+        info.hands = {}
+        for index, poke in ipairs(player.hands) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(info.hands, poke2)
+        end
+    end
+    info.board = {}
+    if player.board ~= nil then
+        for index, poke in ipairs(player.board) do
+            local poke2 = Poke.newCard(poke.figure, poke.pattern)
+            table.insert(info.board, poke2)
+        end
+    end
+    info.handNum = #player.hands
+    info.isWinner = isWinner
+    info.giveUp = player.giveUp
+    return info
+end
+
+local function createData_SettleState(bridge)
+    local server = bridge.server
+    local data = BridgeData:NewData(server)
+    local me = server.players[1]
+    local downstream = server.players[2]
+    local upstream = server.players[3]
+    local currentTurn = bridge.server.currentTurn
+    data.meInfo = wrapPlayerInfo_SettleState(me, true, server.winner == server.players[1])
+    data.downstreamInfo = wrapPlayerInfo_SettleState(downstream, false, server.winner == server.players[2])
+    data.upstreamInfo = wrapPlayerInfo_SettleState(upstream, false, server.winner == server.players[3])
+
     return data;
 end
 
@@ -125,6 +170,17 @@ end
 
 function Bridge:C2S_Done_DealState()
     self.player:Done_DealState()
+end
+
+function Bridge:C2S_MakeDecision_PlayCardState(result, cards)
+    if self.cardPlayCallback ~= nil then
+        self.cardPlayCallback(result, cards)
+        self.cardPlayCallback = nil
+    end
+end
+
+function Bridge:C2S_OnWinnerDialogBtnClick()
+    self.player:completeSettleState()
 end
 
 --server 2 client--
@@ -155,4 +211,24 @@ end
 function Bridge:S2C_startPlayCardState_PlayCardState()
     local data = createData_PlayCardState(self)
     self.client:startPlayCardState_PlayCardState(data)
+end
+
+function Bridge:S2C_notifyPlayCardAction_PlayCardState()
+    local data = createData_PlayCardState(self)
+    self.client:notifyPlayCardAction_PlayCardState(data)
+end
+
+function Bridge:S2C_makePlayCardDecision_PlayCardState(callback)
+    self.cardPlayCallback = callback
+    self.client:makePlayCardDecision_PlayCardState()
+end
+
+function Bridge:S2C_startSettleState()
+    local data = createData_SettleState(self)
+    self.client:startSettleState(data)
+end
+
+function Bridge:S2C_restartReadyState()
+    local data = createData_ReadyState(self)
+    self.client:restartReadyState(data)
 end
