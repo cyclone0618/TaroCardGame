@@ -63,31 +63,6 @@ function RealPlayer:makePlayCardDecision(callback)
     self.bridge:S2C_makePlayCardDecision_PlayCardState(callback)
 end
 
--- function RealPlayer:makePlayCardDecision(callback)
---     coroutineRunner.start(function()
---         --延迟一点时间再出牌
---         coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
---         local lastKindAndFirgure = nil
---         local lastPlayCard = self.server.lastPlayCards
---         if lastPlayCard ~= nil and #lastPlayCard > 0 then
---             local r, kind, figure = Poke.judgeCardsKind(lastPlayCard)
---             if r then
---                 lastKindAndFirgure = { kind = kind, figure = figure }
---             end
---         end
---         --找出所有可能的组合
---         local possibleCards = Poke.GetAllCardsBiggerThan(self.hands, lastKindAndFirgure)
-
---         if #possibleCards > 0 then
---             --出牌
---             callback(1, possibleCards[1])
---         else
---             --弃权
---             callback(0, nil)
---         end
---     end)
--- end
-
 --进入结算阶段
 function RealPlayer:startSettleState()
     self.base.startSettleState(self)
