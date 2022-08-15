@@ -127,6 +127,8 @@ function Server:enterPlayCardState()
 
     self.currentRound = 0
     self.turnOfRound = 0
+    self.lastPlayCards = nil
+    self.lastPlayPlayer = nil
     self:forEachPlayer(function(index, player)
         player:startPlayCardState()
     end)

@@ -39,11 +39,11 @@ function AIPlayer:makePlayCardDecision(callback)
             end
         end
         --找出所有可能的组合
-        local possibleCards = Poke.GetAllCardsBiggerThan(self.hands, lastKindAndFirgure)
+        local possibleCardsAndKinds = Poke.GetAllCardsBiggerThan(self.hands, lastKindAndFirgure)
 
-        if #possibleCards > 0 then
+        if #possibleCardsAndKinds > 0 then
             --出牌
-            callback(1, possibleCards[1])
+            callback(1, possibleCardsAndKinds[1].cards)
         else
             --弃权
             callback(0, nil)

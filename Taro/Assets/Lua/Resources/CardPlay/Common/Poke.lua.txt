@@ -61,14 +61,14 @@ Poke.Card = {
 
 --牌型
 Poke.Kind = {
-    Single = 1, --散牌
-    Pair = 2, --对子
-    Triple = 3, --三条
-    FullHouse = 5, --葫芦
-    Straight = 6, --顺子
+    Single = 2, --散牌
+    Pair = 3, --对子
+    Triple = 5, --三条
     Flush = 7, --同花
-    Bomb = 8, --炸弹
-    StraightFlush = 9, --同花顺
+    FullHouse = 9, --葫芦
+    Straight = 11, --顺子
+    Bomb = 1, --炸弹
+    StraightFlush = 13, --同花顺
 }
 
 --排序
@@ -163,20 +163,26 @@ end
 --获取能赢b的牌型
 function Poke.GetAllCardsBiggerThan(hands, b)
     Poke.SortCard(hands)
-    local possibleCards = {}
+    local possibleCardsAndKinds = {}
 
     for cardNum = 1, 5, 1 do
-        Poke.GetAllCardsRecursion(hands, possibleCards, b, 1, cardNum, 1, {})
+        Poke.GetAllCardsRecursion(hands, possibleCardsAndKinds, b, 1, cardNum, 1, {})
     end
 
-    for index, cards in ipairs(possibleCards) do
-        Poke.PrintCards(cards, '可以出的牌')
-    end
-    return possibleCards
+    table.sort(possibleCardsAndKinds, function (c, d)
+        if c.kind ~= d.kind then
+            --牌型越大越优先
+            return c.kind > d.kind
+        else
+            --牌点越小越优先
+            return c.figure < d.figure
+        end
+    end)
+    return possibleCardsAndKinds
 end
 
 --获取能赢b的牌型(递归)
-function Poke.GetAllCardsRecursion(hands, possibleCards, b, currentNum, totalNum, startIndex, cards)
+function Poke.GetAllCardsRecursion(hands, possibleCardsAndKinds, b, currentNum, totalNum, startIndex, cards)
     for i = startIndex, #hands + currentNum - totalNum, 1 do
         cards[currentNum] = hands[i]
         if currentNum == totalNum then
@@ -186,15 +192,17 @@ function Poke.GetAllCardsRecursion(hands, possibleCards, b, currentNum, totalNum
                     --需要进行大小对比校验
                     local kindAndFigure = { kind = kind, figure = figure }
                     if Poke.JudgeIfBiggerThan(kindAndFigure, b) then
-                        table.insert(possibleCards, Poke.DeepCopyCards(cards))
+                        table.insert(possibleCardsAndKinds,
+                            { cards = Poke.DeepCopyCards(cards), kind = kind, figure = figure })
                     end
                 else
                     --无需大小对比校验
-                    table.insert(possibleCards, Poke.DeepCopyCards(cards))
+                    table.insert(possibleCardsAndKinds,
+                        { cards = Poke.DeepCopyCards(cards), kind = kind, figure = figure })
                 end
             end
         else
-            Poke.GetAllCardsRecursion(hands, possibleCards, b, currentNum + 1, totalNum, i + 1, cards)
+            Poke.GetAllCardsRecursion(hands, possibleCardsAndKinds, b, currentNum + 1, totalNum, i + 1, cards)
         end
     end
 end

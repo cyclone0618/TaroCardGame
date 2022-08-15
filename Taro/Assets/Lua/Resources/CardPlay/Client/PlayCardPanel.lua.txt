@@ -69,6 +69,7 @@ end
 function PlayCardPanel:SetData_StartPlayCard(data)
     playCardBtn:Show()
     giveUpBtn:Show()
+    myHandSet:CleanSelected()
     self:SetData_PlayCardAction(data)
 end
 
