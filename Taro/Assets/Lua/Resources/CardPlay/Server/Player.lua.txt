@@ -57,6 +57,7 @@ end
 function Player:beforeDeal(deck)
     --创建手牌
     self.hands = {}
+    self.board = {}
     self.handNum = 18
 end
 

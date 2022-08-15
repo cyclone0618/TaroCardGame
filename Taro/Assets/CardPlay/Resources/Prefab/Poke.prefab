@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 551139257284292068}
   - component: {fileID: 551139257284292069}
   - component: {fileID: 5980955744428408350}
+  - component: {fileID: 5313783878630529704}
   m_Layer: 0
   m_Name: Poke
   m_TagString: Untagged
@@ -97,6 +98,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshRenderer: {fileID: 1497924837620223951}
   text: {fileID: 3429362869441301250}
+--- !u!61 &5313783878630529704
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551139257284292058}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0.099999994, y: 0.089999996, z: 0.105, w: 0.105}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.32, y: 0.32}
+    newSize: {x: 1.854, y: 3}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 1
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.854, y: 3}
+  m_EdgeRadius: 0
 --- !u!1 &7177391767192171024
 GameObject:
   m_ObjectHideFlags: 0

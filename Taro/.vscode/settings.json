@@ -53,7 +53,9 @@
         "Temp/":true
     },
     "cSpell.words": [
-        "Behaviour"
+        "Behaviour",
+        "Mathf",
+        "Raycast"
     ],
     "files.associations": {
         "*.lua.txt":"lua"

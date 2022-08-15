@@ -44,7 +44,7 @@ function PlayInfoArea:SetData(info)
 end
 
 function PlayInfoArea:UpdateHandsNum(handsNum)
-    self.handsNumTxt.text = "手牌数量："..handsNum
+    self.handsNumTxt.text = "手牌数量：" .. handsNum
 end
 
 local upPlayInfoArea = PlayInfoArea:Create("UpstreamPlayInfo")
@@ -53,7 +53,7 @@ local myPlayInfoArea = PlayInfoArea:Create("MyPlayInfo")
 
 function PlayCardPanel:Show()
     upPlayInfoArea:Show("上游玩家", 0)
-    downPlayInfoArea:Show( "下游玩家", 0)
+    downPlayInfoArea:Show("下游玩家", 0)
     myPlayInfoArea:Show("我方玩家", 0)
 end
 
@@ -91,6 +91,9 @@ function PlayCardPanel:SetData_PlayCardAction(data)
 
     playCardBtn:SetEnable(false)
     giveUpBtn:SetEnable(false)
+    self.lastPlayCards = data.lastPlayCards
+    self.enablePlayCard = false
+    self.couldGiveUp = data.couldGiveUp
 end
 
 function PlayCardPanel:SetData_SettleState(data, client)
@@ -106,15 +109,52 @@ function PlayCardPanel:SetData_SettleState(data, client)
     elseif data.downstreamInfo.isWinner then
         winnerInfo = "胜者是下游玩家"
     end
-    winnerDialog:Show(winnerInfo, function ()
+    winnerDialog:Show(winnerInfo, function()
         winnerDialog:Hide()
         client.bridge:C2S_OnWinnerDialogBtnClick()
     end)
 end
 
-function PlayCardPanel:EnableUIForMakeDesicion()
-    playCardBtn:SetEnable(true)
-    giveUpBtn:SetEnable(true)
+function PlayCardPanel:EnableUIForMakeDesicion(client)
+    self.enablePlayCard = true
+    self:CheckPlayCardBtn()
+    giveUpBtn:SetEnable(self.couldGiveUp)
+    playCardBtn:SetClickFunction(function ()
+        client.bridge:C2S_MakeDecision_PlayCardState(1, myHandSet.selected)
+        myHandSet:CleanSelected()
+    end)
+    giveUpBtn:SetClickFunction(function ()
+        client.bridge:C2S_MakeDecision_PlayCardState(0)
+    end)
+end
+
+function PlayCardPanel:CheckPlayCardBtn()
+    local cards = myHandSet.selected
+    local enablePlayCard = false
+    if self.enablePlayCard then
+        local result, kind, figure = Poke.judgeCardsKind(cards)
+        if result then
+            if self.lastPlayCards ~= nil then
+                local result2, kind2, figure2 = Poke.judgeCardsKind(self.lastPlayCards)
+                if result2 then
+                    local judgeResult = Poke.JudgeIfBiggerThan({ kind = kind, figure = figure },
+                        { kind = kind2, figure = figure2 })
+                    enablePlayCard = judgeResult
+                else
+                    enablePlayCard = true
+                end
+            else
+                enablePlayCard = true
+            end
+        end
+    end
+
+    playCardBtn:SetEnable(enablePlayCard)
+end
+
+function PlayCardPanel:ClickPokeObj(obj)
+    myHandSet:ClickObj(obj)
+    self:CheckPlayCardBtn()
 end
 
 function PlayCardPanel:Hide()
@@ -132,5 +172,6 @@ end
 
 function PlayCardPanel:OnDispose()
     winnerDialog:OnDispose()
+    playCardBtn:OnDispose()
+    giveUpBtn:OnDispose()
 end
-

@@ -19,3 +19,13 @@ end
 function Button:SetEnable(enable)
     self.button.interactable = enable
 end
+
+function Button:SetClickFunction(func)
+    self.button.onClick:RemoveAllListeners()
+    self.button.onClick:AddListener(func)
+end
+
+function Button:OnDispose()
+    self.button.onClick:RemoveAllListeners()
+    self.button.onClick = nil
+end

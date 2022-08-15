@@ -48,13 +48,13 @@ Poke.Card = {
             end
         end
     end,
-    name = function (self)
-        return '['..figureStr[self.figure]..', '..patternStr[self.pattern]..']'
+    name = function(self)
+        return '[' .. figureStr[self.figure] .. ', ' .. patternStr[self.pattern] .. ']'
     end,
-    tostring = function (self)
+    tostring = function(self)
         return self:name()
     end,
-    same = function (self, b)
+    same = function(self, b)
         return self.figure == b.figure and self.pattern == b.pattern
     end
 }
@@ -73,7 +73,7 @@ Poke.Kind = {
 
 --排序
 function Poke.SortCard(cards)
-    table.sort(cards, function (a, b)
+    table.sort(cards, function(a, b)
         return a:compare(b) < 0
     end)
 end
@@ -95,7 +95,7 @@ function Poke.judgeCardsKind(cards)
                 --对子
                 return true, Poke.Kind.Pair, cards[1].figure
             end
-            
+
         end
     elseif cardNum == 3 then
         if cards[1].figure == cards[2].figure and cards[1].figure == cards[3].figure then
@@ -103,34 +103,34 @@ function Poke.judgeCardsKind(cards)
             return true, Poke.Kind.Triple, cards[1].figure
         end
     elseif cardNum == 4 then
-        if cards[1].figure == cards[2].figure and cards[1].figure == cards[3].figure and cards[1].figure == cards[4].figure then
+        if cards[1].figure == cards[2].figure and cards[1].figure == cards[3].figure and
+            cards[1].figure == cards[4].figure then
             --炸弹
             return true, Poke.Kind.Bomb, cards[1].figure
         end
     elseif cardNum == 5 then
         if cards[1].figure == cards[2].figure and cards[4].figure == cards[5].figure then
             --葫芦
-            if cards[1].figure == cards[3] then
+            if cards[1].figure == cards[3].figure then
                 return true, Poke.Kind.FullHouse, cards[1].figure
-            elseif cards[5].figure == cards[3] then
+            elseif cards[5].figure == cards[3].figure then
                 return true, Poke.Kind.FullHouse, cards[5].figure
             end
-            
         end
-        
+
         local isStraight, isFlush = false, false
         if cards[1].figure == cards[2].figure - 1 and
             cards[2].figure == cards[3].figure - 1 and
             cards[3].figure == cards[4].figure - 1 and
             cards[4].figure == cards[5].figure - 1 then
             isStraight = true
-            
+
         end
 
         if cards[1].pattern == cards[2].pattern and
-        cards[2].pattern == cards[3].pattern and
-        cards[3].pattern == cards[4].pattern and
-        cards[4].pattern == cards[5].pattern then
+            cards[2].pattern == cards[3].pattern and
+            cards[3].pattern == cards[4].pattern and
+            cards[4].pattern == cards[5].pattern then
             isFlush = false
         end
 
@@ -154,7 +154,7 @@ function Poke.JudgeIfBiggerThan(a, b)
     if a.kind == b.kind then
         -- 同牌型下，比点数大小
         return a.figure > b.figure
-    elseif a.kind == Poke.Kind.Bomb and b.kind ~=Poke.Kind.StraightFlush then
+    elseif a.kind == Poke.Kind.Bomb and b.kind ~= Poke.Kind.StraightFlush then
         -- 不同牌型下，炸弹可以吃掉同花顺以外的牌型
         return true
     end
@@ -202,8 +202,10 @@ end
 --深度拷贝卡牌数组
 function Poke.DeepCopyCards(cards)
     local newCards = {}
-    for index, value in ipairs(cards) do
-        newCards[index] = value
+    if cards ~= nil then
+        for index, value in ipairs(cards) do
+            newCards[index] = value
+        end
     end
     return newCards
 end
@@ -232,7 +234,7 @@ function Poke.PrintCards(cards, prefixStr)
             handsStr[index] = value:name()
         end
     end
-    print(prefixStr..':('..table.concat(handsStr, ',')..')')
+    print(prefixStr .. ':(' .. table.concat(handsStr, ',') .. ')')
 end
 
 -- 创建新卡牌

@@ -1,10 +1,12 @@
 ﻿PokeObjSet = {}
 local pokePrefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
+local upSize = 0.5
 
 function PokeObjSet:New(parent)
     local set = setmetatable({}, { __index = self })
     set.parent = parent
     set.hands = {}
+    set.selected = {}
     return set
 end
 
@@ -16,21 +18,65 @@ function PokeObjSet:SetData(cardsData)
     if cardsData ~= nil then
         local handNum = #cardsData
         for index, pokeData in ipairs(cardsData) do
+            local selected = self.Contains(self.selected, pokeData)
+            local y = 0
+            if selected then
+                y = upSize
+            end
             local pokeObj = CS.UnityEngine.Object.Instantiate(pokePrefab, self.parent.transform)
-            pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - 0.5 - handNum * 0.5) * 2, 0, 0)
+            pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - 0.5 - handNum * 0.5) * 2, y, 0)
             local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
             pokeMono:SetContent(pokeData.figure, pokeData.pattern)
-            table.insert(self.hands, pokeObj)
+            table.insert(self.hands, {obj = pokeObj, data = pokeData})
         end
     end
 end
 
 function PokeObjSet:Clean()
-    local oldChildNum = self.parent.transform:GetChildCount()
+    local oldChildNum = self.parent.transform.childCount
     if oldChildNum > 0 then
         for i = oldChildNum, 1, -1 do
             local child = self.parent.transform:GetChild(i - 1).gameObject
             CS.UnityEngine.Object.Destroy(child)
         end
     end
+    self.hands = {}
+end
+
+--点击了某些扑克牌
+function PokeObjSet:ClickObj(obj)
+    for index, value in ipairs(self.hands) do
+        if obj == value.obj then
+            local selectedData = value.data
+            local selected, index = self.Contains(self.selected, selectedData)
+            local y = 0
+
+            if selected then
+                table.remove(self.selected, index)
+                y = 0
+            else
+                table.insert(self.selected, selectedData)
+                y= upSize
+            end
+
+            --更改选中的牌的Y坐标
+            local localPos = obj.transform.localPosition
+            localPos.y = y
+            obj.transform.localPosition = localPos
+        end
+    end
+end
+
+function PokeObjSet:CleanSelected()
+    self.selected = {}
+end
+
+function PokeObjSet.Contains(cards, card)
+    for index, value in ipairs(cards) do
+        if card:same(value) then
+            return true, index
+        end
+    end
+
+    return false, 0
 end

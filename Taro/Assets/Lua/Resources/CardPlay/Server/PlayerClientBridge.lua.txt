@@ -41,7 +41,7 @@ local function createData_ReadyState(bridge)
     local me = server.players[1]
     local downstream = server.players[2]
     local upstream = server.players[3]
-
+    data.state = server.state
     data.meInfo = wrapPlayerInfo_ReadyState(me)
     data.downstreamInfo = wrapPlayerInfo_ReadyState(downstream)
     data.upstreamInfo = wrapPlayerInfo_ReadyState(upstream)
@@ -68,7 +68,7 @@ local function createData_DealState(bridge)
     local me = server.players[1]
     local downstream = server.players[2]
     local upstream = server.players[3]
-
+    data.state = server.state
     data.meInfo = wrapPlayerInfo_DealState(me, true)
     data.downstreamInfo = wrapPlayerInfo_DealState(downstream, false)
     data.upstreamInfo = wrapPlayerInfo_DealState(upstream, false)
@@ -105,6 +105,7 @@ local function createData_PlayCardState(bridge)
     local downstream = server.players[2]
     local upstream = server.players[3]
     local currentTurn = bridge.server.currentTurn
+    data.state = server.state
     data.meInfo = wrapPlayerInfo_PlayCardState(me, true, currentTurn == 1)
     data.downstreamInfo = wrapPlayerInfo_PlayCardState(downstream, false, currentTurn == 2)
     data.upstreamInfo = wrapPlayerInfo_PlayCardState(upstream, false, currentTurn == 3)
@@ -116,6 +117,7 @@ local function createData_PlayCardState(bridge)
             table.insert(data.lastPlayCards, poke2)
         end
     end
+    data.couldGiveUp = server.turnOfRound ~= 0
 
     return data;
 end
@@ -150,6 +152,7 @@ local function createData_SettleState(bridge)
     local downstream = server.players[2]
     local upstream = server.players[3]
     local currentTurn = bridge.server.currentTurn
+    data.state = server.state
     data.meInfo = wrapPlayerInfo_SettleState(me, true, server.winner == server.players[1])
     data.downstreamInfo = wrapPlayerInfo_SettleState(downstream, false, server.winner == server.players[2])
     data.upstreamInfo = wrapPlayerInfo_SettleState(upstream, false, server.winner == server.players[3])
@@ -174,7 +177,7 @@ end
 
 function Bridge:C2S_MakeDecision_PlayCardState(result, cards)
     if self.cardPlayCallback ~= nil then
-        self.cardPlayCallback(result, cards)
+        self.cardPlayCallback(result, Poke.DeepCopyCards(cards))
         self.cardPlayCallback = nil
     end
 end

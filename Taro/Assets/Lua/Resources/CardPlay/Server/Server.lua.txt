@@ -125,12 +125,14 @@ function Server:enterPlayCardState()
     --先决定谁的回合
     self.currentTurn = math.random(1, #self.players)
 
+    self.currentRound = 0
+    self.turnOfRound = 0
     self:forEachPlayer(function(index, player)
         player:startPlayCardState()
     end)
 
     --循环处理打牌回合，直到游戏结束
-    self:onPlayCardState()
+    self:playCardTurnAction()
 end
 
 --玩家决策
@@ -176,13 +178,6 @@ function Server:notifyEachPlayerAfterPlayCardAction()
     self:forEachPlayer(function(index, player)
         player:notifyPlayCardAction()
     end)
-end
-
---打牌阶段主流程
-function Server:onPlayCardState()
-    self.currentRound = 0
-    self.turnOfRound = 0
-    self:playCardTurnAction()
 end
 
 --检查是否有玩家胜利

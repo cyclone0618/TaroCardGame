@@ -8,6 +8,7 @@ local Client = {}
 local bridge = {}
 
 function Client:UpdateUI_ReadyState(data)
+    self:UpdateInfo(data)
     ReadyPanel:UpdateUI_ReadyState(self, data)
 end
 
@@ -20,30 +21,45 @@ function Client:startDealState()
 end
 
 function Client:afterDeal_DealState(data)
+    self:UpdateInfo(data)
     PlayCardPanel:Show()
     PlayCardPanel:SetData_AfterDeal(data)
     bridge:C2S_Done_DealState()
 end
 
 function Client:startPlayCardState_PlayCardState(data)
+    self:UpdateInfo(data)
     PlayCardPanel:SetData_StartPlayCard(data)
 end
 
 function Client:notifyPlayCardAction_PlayCardState(data)
+    self:UpdateInfo(data)
     PlayCardPanel:SetData_PlayCardAction(data)
 end
 
 function Client:makePlayCardDecision_PlayCardState()
-    PlayCardPanel:EnableUIForMakeDesicion()
+    PlayCardPanel:EnableUIForMakeDesicion(self)
 end
 
 function Client:startSettleState(data)
+    self:UpdateInfo(data)
     PlayCardPanel:SetData_SettleState(data, self)
 end
 
 function Client:restartReadyState(data)
+    self:UpdateInfo(data)
     PlayCardPanel:Hide()
     ReadyPanel:UpdateUI_ReadyState(self, data)
+end
+
+function Client:UpdateInfo(data)
+    self.state = data.state
+end
+
+function ClickPokeObj(obj)
+    if Client.state == State.playCard then
+        PlayCardPanel:ClickPokeObj(obj)
+    end
 end
 
 --绑定服务端，如果成功，会返回一个桥接对象
