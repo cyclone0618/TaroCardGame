@@ -1,6 +1,8 @@
-﻿PokeObjSet = {}
+﻿require('CardPlay.Client.PrefabPool')
+PokeObjSet = {}
 local pokePrefab = assert(CS.UnityEngine.Resources.Load("Prefab/Poke", typeof(CS.UnityEngine.GameObject)))
 local upSize = 0.5
+local pokePool = PrefabPool:CreatePool(pokePrefab, assert(CS.UnityEngine.GameObject.Find("PokePool").transform), 25)
 
 function PokeObjSet:New(parent)
     local set = setmetatable({}, { __index = self })
@@ -23,8 +25,11 @@ function PokeObjSet:SetData(cardsData)
             if selected then
                 y = upSize
             end
-            local pokeObj = CS.UnityEngine.Object.Instantiate(pokePrefab, self.parent.transform)
-            pokeObj.transform.localPosition = CS.UnityEngine.Vector3((index - 0.5 - handNum * 0.5) * 2, y, 0)
+            local pokeObj = pokePool:Spawn(self.parent.transform)
+            local transform = pokeObj.transform
+            transform.localPosition = CS.UnityEngine.Vector3((index - 0.5 - handNum * 0.5) * 2, y, 0)
+            transform.localScale = CS.UnityEngine.Vector3(1, 1, 1)
+            transform.localRotation = CS.UnityEngine.Quaternion.Euler(0, 0, 0)
             local pokeMono = pokeObj:GetComponent(typeof(CS.Taro.CardPlay.Poke))
             pokeMono:SetContent(pokeData.figure, pokeData.pattern)
             table.insert(self.hands, {obj = pokeObj, data = pokeData})
@@ -37,7 +42,7 @@ function PokeObjSet:Clean()
     if oldChildNum > 0 then
         for i = oldChildNum, 1, -1 do
             local child = self.parent.transform:GetChild(i - 1).gameObject
-            CS.UnityEngine.Object.Destroy(child)
+            pokePool:Despawn(child)
         end
     end
     self.hands = {}

@@ -1,0 +1,40 @@
+﻿PrefabPool = {}
+
+function PrefabPool:CreatePool(prefab, holder, initCapacity)
+    local pool = setmetatable({}, { __index = self })
+    pool.prefab = prefab
+    pool.holder = holder
+    pool.activeList = {}
+    pool.inactiveList = {}
+    for i = 1, initCapacity, 1 do
+        local obj = CS.UnityEngine.Object.Instantiate(prefab)
+        obj:SetActive(false)
+        table.insert(pool.inactiveList, obj)
+        obj.transform.parent = holder
+    end
+    return pool
+end
+
+function PrefabPool:Spawn(parent)
+    local inactiveListNum = #self.inactiveList
+    local obj = nil
+    if inactiveListNum > 0 then
+        obj =  table.remove(self.inactiveList)
+    else
+        obj = CS.UnityEngine.Object.Instantiate(self.prefab)
+    end
+    obj.transform.parent = parent
+    obj:SetActive(true)
+    self.activeList[obj] = obj
+
+    return obj;
+end
+
+function PrefabPool:Despawn(obj)
+    obj.transform.parent = self.holder
+    obj:SetActive(false)
+    self.activeList[obj] = nil
+    table.insert(self.inactiveList, obj)
+end
+
+

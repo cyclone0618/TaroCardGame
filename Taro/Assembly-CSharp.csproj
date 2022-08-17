@@ -45,6 +45,7 @@
      <Compile Include="Assets/XLua/Gen/System_Collections_IEnumeratorBridge.cs" />
      <Compile Include="Assets/XLua/Gen/Taro_CardPlay_PokeWrap.cs" />
      <Compile Include="Assets/XLua/Gen/UnityEngine_ObjectWrap.cs" />
+     <Compile Include="Assets/XLua/Gen/UnityEngine_QuaternionWrap.cs" />
      <Compile Include="Assets/XLua/Gen/UnityEngine_Vector3Wrap.cs" />
      <Compile Include="Assets/XLua/Gen/UnityEngine_WaitForSecondsWrap.cs" />
      <Compile Include="Assets/XLua/Gen/WrapPusher.cs" />
@@ -79,6 +80,7 @@
      <None Include="Assets/Lua/Resources/CardPlay/Client/PlayCardPanel.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/AIPlayer.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Client/PokeObjSet.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Client/PrefabPool.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Common/CoroutineRunner.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Client/Client.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/profiler.lua.txt" />

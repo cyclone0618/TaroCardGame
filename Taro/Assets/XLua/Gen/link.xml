@@ -6,6 +6,7 @@
 	    <type fullname="UnityEngine.WaitForSeconds" preserve="all"/>
 		<type fullname="UnityEngine.Object" preserve="all"/>
 		<type fullname="UnityEngine.Vector3" preserve="all"/>
+		<type fullname="UnityEngine.Quaternion" preserve="all"/>
 		
 	</assembly>
 

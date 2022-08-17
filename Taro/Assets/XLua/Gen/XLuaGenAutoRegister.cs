@@ -31,6 +31,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(UnityEngine.Vector3), UnityEngineVector3Wrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(UnityEngine.Quaternion), UnityEngineQuaternionWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(Taro.CardPlay.Poke), TaroCardPlayPokeWrap.__Register);
         
         

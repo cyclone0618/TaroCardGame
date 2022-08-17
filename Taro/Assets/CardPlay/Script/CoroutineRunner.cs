@@ -22,6 +22,7 @@ public static class CoroutineConfig
                 typeof(WaitForSeconds),
                 typeof(UnityEngine.Object),
                 typeof(UnityEngine.Vector3),
+                typeof(UnityEngine.Quaternion),
             };
         }
     }
