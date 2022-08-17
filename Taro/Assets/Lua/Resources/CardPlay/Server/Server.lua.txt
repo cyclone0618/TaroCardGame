@@ -9,7 +9,6 @@ Server = {
     state = State.ready,
     chooseTaroStep = ChooseTaroStep.noSelect,
     dealStep = DealStep.beforeDeal,
-    playCardStep = PlayCardStep.Player1Turn,
 }
 
 --客户端链接服务端

@@ -74,6 +74,7 @@
      <Compile Include="Assets/XLua/Src/Utils.cs" />
      <None Include="Assets/Lua/Resources/CardPlay/Common/State.lua.txt" />
      <None Include="Assets/XLua/Gen/link.xml" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/TaroDeck.lua.txt" />
      <None Include="Assets/XLua/Resources/xlua/util.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Client/PlayCardPanel.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/AIPlayer.lua.txt" />
@@ -82,6 +83,7 @@
      <None Include="Assets/Lua/Resources/CardPlay/Client/Client.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/profiler.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Client/ReadyPanel.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/Taro.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Server/Server.lua.txt" />
      <None Include="Assets/XLua/Resources/perf/memory.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Common/Poke.lua.txt" />
@@ -93,6 +95,7 @@
      <None Include="Assets/XLua/CHANGELOG.txt" />
      <None Include="Assets/Lua/Resources/Template.lua.txt" />
      <None Include="Assets/Lua/Resources/CardPlay/Client/Button.lua.txt" />
+     <None Include="Assets/Lua/Resources/CardPlay/Common/Taro/Magician.lua.txt" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2019.4.38f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

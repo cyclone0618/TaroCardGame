@@ -16,9 +16,3 @@ DealStep = {
     dealing = 2, --发牌中
     afterDeal = 3, --发牌后
 }
-
-PlayCardStep = {
-    Player1Turn = 1, --玩家1回合
-    Player2Turn = 2, --玩家2回合
-    Player3Turn = 3, --玩家3回合
-}
