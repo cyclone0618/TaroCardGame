@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7470589675409824076}
   - component: {fileID: 9012292731762130426}
   m_Layer: 0
-  m_Name: Taro
+  m_Name: Tarot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

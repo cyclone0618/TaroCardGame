@@ -1,5 +1,0 @@
-﻿function CreateTaroDeck()
-    local taroDeck = {}
-    table.insert(taroDeck, require('CardPlay.Common.Taro.Magician'):Create())
-    return taroDeck
-end

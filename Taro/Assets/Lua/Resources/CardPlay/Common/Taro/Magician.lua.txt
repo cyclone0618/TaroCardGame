@@ -1,9 +1,0 @@
-﻿Magician = setmetatable({}, { __index = Taro })
-
-function Magician:Create()
-    local magician = setmetatable({}, { __index = self })
-    magician:OnCreate()
-    return magician
-end
-
-return Magician

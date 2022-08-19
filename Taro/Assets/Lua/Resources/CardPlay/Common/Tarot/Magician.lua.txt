@@ -1,0 +1,26 @@
+﻿require('CardPlay.Common.Tarot')
+
+Magician = setmetatable({}, { __index = Tarot })
+
+function Magician:Create()
+    local magician = setmetatable({}, { __index = self })
+    magician:OnCreate()
+    return magician
+end
+
+--获取名字
+function Magician:GetName()
+    return '魔术师'
+end
+
+--获取文本
+function Magician:GetContent(location)
+    if location == Location.UpRight then
+        return '游戏开始时，获得一张百搭牌。百搭牌会在出牌时变成最适合的牌，但不能变成Joker。'
+    else
+        return '你的百搭牌变成方块A。'
+    end
+end
+
+
+return Magician

@@ -625,7 +625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 194845671}
   m_Layer: 0
-  m_Name: Opponent2Taro
+  m_Name: Opponent2Tarot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1582,7 +1582,7 @@ GameObject:
   - component: {fileID: 615265606}
   - component: {fileID: 615265605}
   m_Layer: 5
-  m_Name: TaroSelectDialog
+  m_Name: TarotSelectDialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1940,7 +1940,7 @@ PrefabInstance:
     - target: {fileID: 5220516729286659315, guid: 141184f0de08b44a28e70e1389aaecd9,
         type: 3}
       propertyPath: m_Name
-      value: Taro2
+      value: Tarot2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 141184f0de08b44a28e70e1389aaecd9, type: 3}
@@ -1960,7 +1960,7 @@ GameObject:
   m_Component:
   - component: {fileID: 776953032}
   m_Layer: 0
-  m_Name: Opponent1Taro
+  m_Name: Opponent1Tarot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2106,7 +2106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 936397173}
   m_Layer: 0
-  m_Name: MyTaro
+  m_Name: MyTarot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2313,7 +2313,7 @@ PrefabInstance:
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
       propertyPath: m_Name
-      value: Taro
+      value: Tarot
       objectReference: {fileID: 0}
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
@@ -2714,7 +2714,7 @@ GameObject:
   - component: {fileID: 1264996098}
   - component: {fileID: 1264996099}
   m_Layer: 5
-  m_Name: TaroList
+  m_Name: TarotList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3694,7 +3694,7 @@ PrefabInstance:
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
       propertyPath: m_Name
-      value: Taro
+      value: Tarot
       objectReference: {fileID: 0}
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
@@ -4142,7 +4142,7 @@ PrefabInstance:
     - target: {fileID: 5220516729286659315, guid: 141184f0de08b44a28e70e1389aaecd9,
         type: 3}
       propertyPath: m_Name
-      value: Taro3
+      value: Tarot3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 141184f0de08b44a28e70e1389aaecd9, type: 3}
@@ -4265,7 +4265,7 @@ PrefabInstance:
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
       propertyPath: m_Name
-      value: Taro
+      value: Tarot
       objectReference: {fileID: 0}
     - target: {fileID: 3677831250238737032, guid: 690d20f3a2e064b69b640b5ddab37e6a,
         type: 3}
@@ -4450,7 +4450,7 @@ PrefabInstance:
     - target: {fileID: 5220516729286659315, guid: 141184f0de08b44a28e70e1389aaecd9,
         type: 3}
       propertyPath: m_Name
-      value: Taro1
+      value: Tarot1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 141184f0de08b44a28e70e1389aaecd9, type: 3}

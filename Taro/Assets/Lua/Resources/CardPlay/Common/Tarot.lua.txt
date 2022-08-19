@@ -1,0 +1,25 @@
+﻿Tarot = {}
+
+--塔罗牌位置
+Location = {
+    --正位
+    UpRight = 1,
+    --逆位
+    Reversed = 2,
+}
+
+function Tarot:OnCreate()
+end
+
+--获取名字
+function Tarot:GetName()
+end
+
+--获取文本
+function Tarot:GetContent(location)
+end
+
+--默认位置
+function Tarot:DefaultLocation()
+    return Location.UpRight
+end

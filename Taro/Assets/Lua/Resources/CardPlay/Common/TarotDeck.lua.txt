@@ -1,0 +1,5 @@
+﻿function CreateTaroDeck()
+    local tarotDeck = {}
+    table.insert(tarotDeck, require('CardPlay.Common.Tarot.Magician'):Create())
+    return tarotDeck
+end

@@ -1,8 +1,0 @@
-﻿Taro = {}
-
-function Taro:OnCreate()
-end
-
--- function Taro:()
-    
--- end
